@@ -10,29 +10,6 @@ function setNet(ok){
 }
 
 
-
-function extractTrackId(url){
-  const m = String(url || '').match(/open\.spotify\.com\/track\/([A-Za-z0-9]+)/);
-  return m ? m[1] : null;
-}
-
-function openSpotify(url){
-  // iOS/PWA often won't open the Spotify app from a normal link reliably.
-  // We try deep link first, then fall back to https.
-  const id = extractTrackId(url);
-  const fallback = url;
-
-  if(id){
-    const deep = 'spotify://track/' + id;
-    // Must be triggered by a user gesture (button click)
-    try { window.location.href = deep; } catch(e) {}
-    // fallback after a short delay
-    setTimeout(()=>{ window.location.href = fallback; }, 600);
-  } else {
-    window.location.href = fallback;
-  }
-}
-
 async function api(d){
   const r = await fetch('/api',{
     method:'POST',

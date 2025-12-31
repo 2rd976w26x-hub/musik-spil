@@ -10,11 +10,12 @@
 <div class="appShell">
 <header class="topbar"><div class="brand">🎵 Musik Spil</div><div class="topbarRight"><span id="netStatus" class="pill pillNeutral">Online</span></div></header>
 <main class="container">
+<h2 id="roomCodeDisplay" class="roomCode hidden"></h2>
 
-
-<h2 id="roomCodeDisplay" class="roomCode hidden" class="hidden"></h2>
-
-<div id="view-lobby">
+\1
+  <div class="card">
+    <div class="cardHeader"><h2 class="cardTitle">Lobby</h2></div>
+    <div class="cardBody">
   <input id="nameInput" class="input" placeholder="Dit navn">
   <button id="createBtn" class="btn btnPrimary">Opret rum</button><br><br>
   <input id="roomInput" class="input" placeholder="Rumkode">
@@ -46,7 +47,10 @@
   </div>
 </div>
 
-<div id="view-round" class="hidden">
+\1
+  <div class="card">
+    <div class="cardHeader"><h2 class="cardTitle">Runde</h2></div>
+    <div class="cardBody">
   <h2 id="roundText"></h2>
   <div id="roleText"></div>
   <div id="timerText"></div>
@@ -54,15 +58,14 @@
   <div id="djPanel" class="hidden">
     <h3 id="djSongTitle"></h3>
     <div id="djSongMeta"></div>
-    <button id="playBtn" class="btn btnSecondary" type="button">Åbn sang i Spotify</button>
-    <a id="playLink" class="hidden" target="_blank" rel="noopener">fallback</a><br>
+    <a id="playLink" class="btn btnSecondary linkBtn" target="_blank" rel="noopener">Åbn sang i Spotify (tryk play)</a><br>
     <button id="startTimerBtn" class="btn btnPrimary">Jeg har trykket play</button>
   </div>
 
   <div id="guessPanel" class="hidden">
     <input id="guessYearInput" class="input" inputmode="numeric" placeholder="Årstal (fx 1996)">
     <button id="submitGuessBtn" class="btn btnPrimary">Afgiv gæt</button>
-    <div id="guessStatus" class="hintText"></div>
+    <div id="guessStatus"></div>
   </div>
 
   <h3 class="sectionTitle">Hvem har gættet?</h3>
@@ -70,15 +73,22 @@
 
   <h3 class="sectionTitle">Score</h3>
   <ul id="scoreboard"></ul>
+    </div>
+  </div>
 </div>
 
-<div id="view-result" class="hidden">
+\1
+  <div class="card">
+    <div class="cardHeader"><h2 class="cardTitle">Resultat</h2></div>
+    <div class="cardBody">
   <h3 id="resultCorrectYear" class="resultYear"></h3>
   <ul id="resultTable"></ul>
   <button id="nextRoundBtn" class="btn btnPrimary">Næste runde</button>
+    </div>
+  </div>
 </div>
 
-<div id="view-end" class="hidden">
+\1
   <div class="card">
     <div class="cardHeader"><h2 class="cardTitle">Slut</h2></div>
     <div class="cardBody">
@@ -86,12 +96,14 @@
   <ul id="finalScoreboard"></ul>
 
   <button id="newGameBtn" class="btn btnPrimary">Nyt spil</button>
+    </div>
+  </div>
 </div>
 
 <div id="historyPanel" class="hidden">
   <div class="historyHeader">
     <h3>Historik (alle runder)</h3>
-    <button id="historyToggleBtn" class="btn btnTertiary btnSmall" class="btnSmall" type="button">Skjul</button>
+    <button id="historyToggleBtn" class="btnSmall" type="button">Skjul</button>
   </div>
   <div id="historyContainer"></div>
 </div>

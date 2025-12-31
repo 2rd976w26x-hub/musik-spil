@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.3.2-github-ready"
+VERSION = "v1.3.3-github-ready-nice-ui"
 rooms = {}
 
 def gen_code(n=4):

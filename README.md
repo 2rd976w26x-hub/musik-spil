@@ -1,1 +1,1 @@
-Musik Spil v1.4.9 (history viser samlet stilling pr runde)
+Musik Spil v1.4.3 (fix lobby views + start game)

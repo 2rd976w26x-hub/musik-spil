@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.9-github-ready"
+VERSION = "v1.5.0-github-ready"
 rooms = {}
 
 def gen_code(n=4):
@@ -86,61 +86,31 @@ def _players_by_id(room):
     return {p["id"]: p.get("name","") for p in room.get("players", [])}
 
 def record_round_history(room):
+    # Create a snapshot for history (song + guesses + points + dj + timestamp)
+    players = _players_by_id(room)
+    did = dj_id(room)
+    song = deepcopy(room.get("current_song")) if room.get("current_song") else None
 
-"""Append a history entry for the round that just ended."""
-song = room.get("current_song")
-if not song:
-    return
+    guesses_named = []
+    for pid, year in (room.get("guesses") or {}).items():
+        guesses_named.append({
+            "player_id": pid,
+            "player_name": players.get(pid, pid),
+            "guess_year": year,
+            "points": (room.get("last_round_points") or {}).get(pid, 0)
+        })
+    # Sort by name for readability
+    guesses_named.sort(key=lambda x: (x.get("player_name") or ""))
 
-# Build guesses list with points
-guesses_named = []
-for p in room.get("players", []):
-    pid = p.get("id")
-    if not pid:
-        continue
-    g = (room.get("guesses") or {}).get(pid)
-    pts = int((room.get("last_round_points") or {}).get(pid, 0))
-    guesses_named.append({
-        "player_id": pid,
-        "player_name": p.get("name") or pid,
-        "guess": g,
-        "points": pts
-    })
-
-# Snapshot of cumulative scores after this round
-scoreboard = []
-for p in room.get("players", []):
-    pid = p.get("id")
-    if not pid:
-        continue
-    scoreboard.append({
-        "player_id": pid,
-        "player_name": p.get("name") or pid,
-        "score": int((room.get("scores") or {}).get(pid, 0))
-    })
-scoreboard.sort(key=lambda x: (-x["score"], x.get("player_name","")))
-
-# DJ info
-did = None
-dj_name_val = None
-try:
-    dj = room.get("players", [])[room.get("dj_index", 0)]
-    did = dj.get("id")
-    dj_name_val = dj.get("name")
-except Exception:
-    pass
-
-entry = {
-    "round_number": int(room.get("round_index", 0)) + 1,
-    "ended_at": int(now()),
-    "dj_id": did,
-    "dj_name": dj_name_val,
-    "song": song,
-    "guesses": guesses_named,
-    "scoreboard": scoreboard,
-}
-
-room.setdefault("history", []).append(entry)
+    entry = {
+        "round_number": int(room.get("round_index", 0)) + 1,
+        "ended_at": int(now()),
+        "dj_id": did,
+        "dj_name": dj_name(room),
+        "song": song,
+        "guesses": guesses_named
+    }
+    room.setdefault("history", []).append(entry)
 
 def end_round(room):
     correct = int(room["current_song"]["year"])

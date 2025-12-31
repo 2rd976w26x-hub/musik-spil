@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.3-github-ready"
+VERSION = "v1.4.4-github-ready"
 rooms = {}
 
 def gen_code(n=4):
@@ -230,8 +230,20 @@ def api():
         room = rooms.get(data.get("room"))
         if not room:
             return jsonify({"error": "room_not_found"}), 400
-        room["round_started_at"] = now()
-        return jsonify({"ok": True})
+        # only allow when a round is active
+        if not room.get("started") or room.get("status") != "round" or not room.get("current_song"):
+            return jsonify({"error": "no_active_round"}), 400
+        # only DJ can start timer
+        pid = data.get("player")
+        try:
+            dj = room["players"][room.get("dj_index", 0)]
+        except Exception:
+            dj = None
+        if dj and pid and pid != dj.get("id"):
+            return jsonify({"error": "not_dj"}), 400
+        started_at = now()
+        room["round_started_at"] = started_at
+        return jsonify({"ok": True, "round_started_at": started_at})
 
     if action == "submit_guess":
         room = rooms.get(data.get("room"))

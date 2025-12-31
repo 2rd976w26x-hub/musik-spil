@@ -167,3 +167,5 @@ li{margin:6px 0}
 .roomTopRow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:10px 0 14px 0}
 
 #versionText{opacity:.9}
+
+.btn.disabled, .btn:disabled{opacity:.55;cursor:not-allowed}

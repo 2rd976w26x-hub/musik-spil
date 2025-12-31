@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.1-github-ready"
+VERSION = "v1.4.2-github-ready"
 rooms = {}
 
 def gen_code(n=4):
@@ -297,70 +297,58 @@ def api():
         room["last_round_points"] = {}
         room["history"] = []
         return jsonify({"ok": True})
+    if action == "categories":
+        return jsonify({"categories": sorted(SONGSETS.keys())})
 
-
-if action == "categories":
-    return jsonify({"categories": sorted(SONGSETS.keys())})
-
-if action == "set_category":
-    room = rooms.get(data.get("room"))
-    if not room:
-        return jsonify({"error": "room_not_found"}), 400
-    if room.get("started"):
-        return jsonify({"error": "already_started"}), 400
-    pid = data.get("player")
-    if pid != room.get("host_id"):
-        return jsonify({"error": "not_host"}), 400
-    cat = data.get("category") or "Standard"
-    if cat not in SONGSETS:
-        return jsonify({"error": "bad_category"}), 400
-    room["category"] = cat
-    room["unused_songs"] = get_songs_for_category(cat).copy()
-    room["current_song"] = None
-    room["guesses"] = {}
-    room["last_round_points"] = {}
-    return jsonify({"ok": True})
-
-if action == "leave_room":
-    room_code = data.get("room")
-    pid = data.get("player")
-    room = rooms.get(room_code)
-    if not room:
-        return jsonify({"ok": True})
-    room["players"] = [p for p in room.get("players", []) if p.get("id") != pid]
-    # remove from maps
-    if pid in room.get("scores", {}):
-        room["scores"].pop(pid, None)
-    if pid in room.get("guesses", {}):
-        room["guesses"].pop(pid, None)
-    if pid in room.get("last_round_points", {}):
-        room["last_round_points"].pop(pid, None)
-
-    # if no players left, delete room
-    if not room["players"]:
-        rooms.pop(room_code, None)
-        return jsonify({"ok": True})
-
-    # if host left, transfer host
-    if room.get("host_id") == pid:
-        room["host_id"] = room["players"][0]["id"]
-
-    # clamp dj_index
-    if room.get("dj_index", 0) >= len(room["players"]):
-        room["dj_index"] = 0
-
-    # if game started and only 1 player left, end game
-    if room.get("started") and len(room["players"]) < 2:
-        room["status"] = "lobby"
-        room["started"] = False
-        room["round_started_at"] = None
+    if action == "set_category":
+        room = rooms.get(data.get("room"))
+        if not room:
+            return jsonify({"error": "room_not_found"}), 400
+        if room.get("started"):
+            return jsonify({"error": "already_started"}), 400
+        pid = data.get("player")
+        if pid != room.get("host_id"):
+            return jsonify({"error": "not_host"}), 400
+        cat = data.get("category") or "Standard"
+        if cat not in SONGSETS:
+            return jsonify({"error": "bad_category"}), 400
+        room["category"] = cat
+        room["unused_songs"] = get_songs_for_category(cat).copy()
         room["current_song"] = None
         room["guesses"] = {}
         room["last_round_points"] = {}
-    return jsonify({"ok": True})
+        return jsonify({"ok": True})
+
+    if action == "leave_room":
+        room_code = data.get("room")
+        pid = data.get("player")
+        room = rooms.get(room_code)
+        if not room:
+            return jsonify({"ok": True})
+
+        room["players"] = [p for p in room.get("players", []) if p.get("id") != pid]
+
+        room.get("scores", {}).pop(pid, None)
+        room.get("guesses", {}).pop(pid, None)
+        room.get("last_round_points", {}).pop(pid, None)
+
+        if not room["players"]:
+            rooms.pop(room_code, None)
+            return jsonify({"ok": True})
+
+        if room.get("host_id") == pid:
+            room["host_id"] = room["players"][0]["id"]
+
+        if room.get("dj_index", 0) >= len(room["players"]):
+            room["dj_index"] = 0
+
+        if room.get("started") and len(room["players"]) < 2:
+            room["status"] = "lobby"
+            room["started"] = False
+            room["round_started_at"] = None
+            room["current_song"] = None
+            room["guesses"] = {}
+            room["last_round_points"] = {}
+        return jsonify({"ok": True})
 
     return jsonify({"error": "unknown_action"}), 400
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8787))
-    app.run(host="0.0.0.0", port=port)

@@ -1,0 +1,327 @@
+let room=null, player=null, state=null;
+
+function el(id){ return document.getElementById(id); }
+
+async function api(d){
+  const r = await fetch('/api',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(d)
+  });
+  const data = await r.json().catch(()=> ({}));
+  if(!r.ok){
+    const msg = data && data.error ? data.error : ('http_'+r.status);
+    throw new Error(msg);
+  }
+  return data;
+}
+
+function show(id){
+  ['view-lobby','view-round','view-result','view-end']
+    .forEach(v=>el(v).classList.add('hidden'));
+  el(id).classList.remove('hidden');
+}
+
+function render(){
+  if(!state){
+    show('view-lobby');
+    return;
+  }
+
+  if(!state.started){
+    show('view-lobby');
+    const hp = el('historyPanel');
+    if(hp) hp.classList.add('hidden');
+    renderLobby();
+    return;
+  }
+  const hp = el('historyPanel');
+  if(hp) hp.classList.remove('hidden');
+
+  if(state.status==='round'){
+    show('view-round');
+    renderRound();
+  } else if(state.status==='round_result'){
+    show('view-result');
+    renderResult();
+  } else if(state.status==='game_over'){
+    show('view-end');
+    renderEnd();
+  }
+}
+
+function renderLobby(){
+  const ul = el('lobbyPlayers');
+  ul.innerHTML = '';
+  (state.players||[]).forEach(p=>{
+    const li=document.createElement('li');
+    li.innerText=p.name;
+    ul.appendChild(li);
+  });
+
+  el('hostControls').classList.toggle('hidden', !player || player.id !== state.host_id);
+}
+
+function renderRound(){
+  const dj = state.players[state.dj_index];
+  const isDJ = player && player.id === dj.id;
+
+  el('roundText').innerText = 'Runde ' + (state.round_index+1);
+  el('roleText').innerText = isDJ ? 'Du er DJ' : 'Gæt årstal';
+
+  el('djPanel').classList.toggle('hidden', !isDJ);
+  el('guessPanel').classList.toggle('hidden', isDJ);
+
+  if(isDJ && state.current_song){
+    el('djSongTitle').innerText = state.current_song.title;
+    el('djSongMeta').innerText = state.current_song.artist + ' ('+state.current_song.year+')';
+    el('playLink').href = state.current_song.spotifyUrl;
+  }
+
+  // Guess list: show who has guessed (do not reveal year in-round)
+  const gl = el('guessList');
+  gl.innerHTML = '';
+  (state.players||[]).forEach(p=>{
+    if(p.id === dj.id) return; // DJ doesn't guess
+    const has = state.guesses && (state.guesses[p.id] !== undefined);
+    const li = document.createElement('li');
+    li.innerText = has ? ('✅ ' + p.name) : ('⏳ ' + p.name);
+    gl.appendChild(li);
+  });
+
+  // Scoreboard: total points
+  const sb = el('scoreboard');
+  sb.innerHTML='';
+  (state.players||[]).forEach(p=>{
+    const li=document.createElement('li');
+    const sc = (state.scores && state.scores[p.id] !== undefined) ? state.scores[p.id] : 0;
+    li.innerText = p.name + ': ' + sc + ' point';
+    sb.appendChild(li);
+  });
+
+  if(state.round_started_at){
+    const left = Math.max(0, Math.ceil(
+      state.timer_seconds - (Date.now()/1000 - state.round_started_at)
+    ));
+    el('timerText').innerText = 'Tid tilbage: ' + left + 's';
+  } else {
+    el('timerText').innerText = 'Venter på DJ…';
+  }
+
+  const gs = el('guessStatus');
+  if(gs) gs.innerText = '';
+
+  renderHistory();
+}
+
+function renderResult(){
+  el('resultCorrectYear').innerText = 'Korrekt år: ' + state.current_song.year;
+
+  const dj = state.players[state.dj_index];
+
+  const ul = el('resultTable');
+  ul.innerHTML='';
+
+  (state.players||[]).forEach(p=>{
+    if(p.id === dj.id) return; // DJ doesn't guess
+    const g = state.guesses ? state.guesses[p.id] : undefined;
+    const lp = state.last_round_points ? (state.last_round_points[p.id] ?? 0) : 0;
+    const total = state.scores ? (state.scores[p.id] ?? 0) : 0;
+
+    const li=document.createElement('li');
+    li.innerText = `${p.name}: ${g ?? '-'}  (+${lp})  total: ${total}`;
+    ul.appendChild(li);
+  });
+
+  renderHistory();
+}
+
+function renderEnd(){
+  const scores = (state.players||[])
+    .map(p=>({name:p.name,score:(state.scores?.[p.id] ?? 0)}))
+    .sort((a,b)=>b.score-a.score);
+
+  el('winnerText').innerText = 'Vinder: ' + (scores[0]?.name ?? '-');
+
+  const ul = el('finalScoreboard');
+  ul.innerHTML='';
+  scores.forEach(s=>{
+    const li=document.createElement('li');
+    li.innerText=s.name+': '+s.score;
+    ul.appendChild(li);
+  });
+
+  renderHistory();
+}
+
+function renderHistory(){
+  const c = el('historyContainer');
+  if(!c) return;
+  const hist = state.history || [];
+  if(hist.length === 0){
+    c.innerText = 'Ingen runder endnu.';
+    return;
+  }
+  c.innerHTML = '';
+  hist.forEach(h=>{
+    const card = document.createElement('div');
+    card.className = 'historyCard';
+
+    const song = h.song || {};
+    const title = document.createElement('div');
+    title.className = 'historyTitle';
+    title.innerText = `Runde ${h.round_number}: ${song.title || '-'} — ${song.artist || '-'} (${song.year || '-'})`;
+
+    const meta = document.createElement('div');
+    meta.className = 'historyMeta';
+    meta.innerText = `DJ: ${h.dj_name || '-'}  •  Spotify: ${song.spotifyUrl ? 'link' : '—'}`;
+
+    const link = document.createElement('a');
+    if(song.spotifyUrl){
+      link.href = song.spotifyUrl;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.innerText = 'Åbn i Spotify';
+    } else {
+      link.innerText = '';
+    }
+
+    const table = document.createElement('table');
+    table.className = 'historyTable';
+    const thead = document.createElement('thead');
+    thead.innerHTML = '<tr><th>Spiller</th><th>Gæt</th><th>Point</th></tr>';
+    table.appendChild(thead);
+    const tbody = document.createElement('tbody');
+    (h.guesses || []).forEach(g=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${g.player_name}</td><td>${g.guess_year}</td><td>${g.points}</td>`;
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    card.appendChild(title);
+    card.appendChild(meta);
+    if(song.spotifyUrl) card.appendChild(link);
+    card.appendChild(table);
+    c.appendChild(card);
+  });
+}
+
+async function refreshState(){
+  if(!room) return;
+  try{
+    state = await api({action:'state', room});
+    render();
+  }catch(e){
+    console.warn(e);
+  }
+}
+
+setInterval(refreshState, 1000);
+
+// EVENTS
+el('createBtn').onclick = async () => {
+  try{
+    const r = await api({
+      action:'create_room',
+      name: el('nameInput').value,
+      timer:+el('timerSelect').value,
+      rounds:+el('roundsSelect').value
+    });
+    room = r.room;
+    player = r.player;
+    el('roomCodeDisplay').innerText = 'Rumkode: ' + room;
+    el('roomCodeDisplay').classList.remove('hidden');
+    await refreshState();
+  }catch(e){
+    alert('Kunne ikke oprette rum: ' + e.message);
+  }
+};
+
+el('joinBtn').onclick = async () => {
+  try{
+    room = el('roomInput').value.toUpperCase().trim();
+    const r = await api({action:'join', room, name: el('nameInput').value});
+    player = r.player;
+    el('roomCodeDisplay').innerText = 'Rumkode: ' + room;
+    el('roomCodeDisplay').classList.remove('hidden');
+    await refreshState();
+  }catch(e){
+    alert('Kunne ikke joine: ' + e.message);
+  }
+};
+
+el('startGameBtn').onclick = async () => {
+  try{
+    await api({action:'start_game', room});
+    await refreshState();
+  }catch(e){
+    alert('Kunne ikke starte spil: ' + e.message);
+  }
+};
+
+el('startTimerBtn').onclick = async () => {
+  try{
+    await api({action:'start_timer', room});
+    await refreshState();
+  }catch(e){
+    alert('Kunne ikke starte timer: ' + e.message);
+  }
+};
+
+el('submitGuessBtn').onclick = async () => {
+  try{
+    const yearRaw = el('guessYearInput').value.trim();
+    if(!yearRaw) { el('guessStatus').innerText='Skriv et årstal'; return; }
+    const year = parseInt(yearRaw, 10);
+    if(Number.isNaN(year)) { el('guessStatus').innerText='Ugyldigt årstal'; return; }
+
+    await api({action:'submit_guess', room, player: player.id, year});
+    el('guessStatus').innerText = 'Gæt sendt ✅';
+    await refreshState();
+  }catch(e){
+    el('guessStatus').innerText = 'Fejl: ' + e.message;
+  }
+};
+
+el('nextRoundBtn').onclick = async () => {
+  try{
+    await api({action:'next_round', room});
+    await refreshState();
+  }catch(e){
+    alert('Kunne ikke næste runde: ' + e.message);
+  }
+};
+
+el('newGameBtn').onclick = async () => {
+  try{
+    await api({action:'reset_game', room});
+    await refreshState();
+  }catch(e){
+    alert('Kunne ikke nulstille: ' + e.message);
+  }
+};
+
+
+function initHistoryToggle(){
+  const hp = el('historyPanel');
+  const btn = el('historyToggleBtn');
+  if(!hp || !btn) return;
+
+  const key = 'musikspil_history_collapsed';
+  const saved = localStorage.getItem(key);
+  if(saved === '1'){
+    hp.classList.add('collapsed');
+    btn.innerText = 'Vis';
+  } else {
+    btn.innerText = 'Skjul';
+  }
+
+  btn.onclick = () => {
+    const collapsed = hp.classList.toggle('collapsed');
+    localStorage.setItem(key, collapsed ? '1' : '0');
+    btn.innerText = collapsed ? 'Vis' : 'Skjul';
+  };
+}
+
+initHistoryToggle();

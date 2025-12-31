@@ -1,0 +1,275 @@
+from flask import Flask, request, jsonify, send_from_directory
+import random, string, time, json
+from copy import deepcopy
+import os
+
+app = Flask(__name__, static_folder="web", static_url_path="")
+PORT = 8787
+VERSION = "v1.3.0-clean"
+rooms = {}
+
+def gen_code(n=4):
+    return "".join(random.choices(string.ascii_uppercase, k=n))
+
+def gen_id():
+    return "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
+
+def now():
+    return time.time()
+
+with open("web/songs.json", encoding="utf-8") as f:
+    SONGS = json.load(f)
+
+def points_for_guess(guess: int, correct: int) -> int:
+    d = abs(int(guess) - int(correct))
+    return 3 if d == 0 else 2 if d == 1 else 1 if d == 2 else 0
+
+def dj_id(room):
+    if not room or not room.get("players"):
+        return None
+    try:
+        return room["players"][room["dj_index"]]["id"]
+    except Exception:
+        return None
+
+def dj_name(room):
+    if not room or not room.get("players"):
+        return None
+    try:
+        return room["players"][room["dj_index"]]["name"]
+    except Exception:
+        return None
+
+def all_non_dj_have_guessed(room) -> bool:
+    if not room or room.get("status") != "round":
+        return False
+    did = dj_id(room)
+    if not did:
+        return False
+    guesses = room.get("guesses", {})
+    for p in room.get("players", []):
+        if p["id"] == did:
+            continue
+        if p["id"] not in guesses:
+            return False
+    return len(room.get("players", [])) >= 2
+
+def _players_by_id(room):
+    return {p["id"]: p.get("name","") for p in room.get("players", [])}
+
+def record_round_history(room):
+    # Create a snapshot for history (song + guesses + points + dj + timestamp)
+    players = _players_by_id(room)
+    did = dj_id(room)
+    song = deepcopy(room.get("current_song")) if room.get("current_song") else None
+
+    guesses_named = []
+    for pid, year in (room.get("guesses") or {}).items():
+        guesses_named.append({
+            "player_id": pid,
+            "player_name": players.get(pid, pid),
+            "guess_year": year,
+            "points": (room.get("last_round_points") or {}).get(pid, 0)
+        })
+    # Sort by name for readability
+    guesses_named.sort(key=lambda x: (x.get("player_name") or ""))
+
+    entry = {
+        "round_number": int(room.get("round_index", 0)) + 1,
+        "ended_at": int(now()),
+        "dj_id": did,
+        "dj_name": dj_name(room),
+        "song": song,
+        "guesses": guesses_named
+    }
+    room.setdefault("history", []).append(entry)
+
+def end_round(room):
+    correct = int(room["current_song"]["year"])
+    last_points = {}
+
+    for p in room["players"]:
+        pid = p["id"]
+        g = room["guesses"].get(pid)
+        if g is None:
+            last_points[pid] = 0
+            continue
+        pts = points_for_guess(g, correct)
+        last_points[pid] = pts
+        room["scores"][pid] += pts
+
+    room["last_round_points"] = last_points
+
+    # NEW: store history snapshot before switching view / wiping things later
+    record_round_history(room)
+
+    room["status"] = "round_result"
+    room["round_started_at"] = None
+
+def end_round_if_needed(room):
+    if not room:
+        return
+
+    if all_non_dj_have_guessed(room):
+        end_round(room)
+        return
+
+    started_at = room.get("round_started_at")
+    if not started_at:
+        return
+    if now() - started_at < room["timer_seconds"]:
+        return
+
+    end_round(room)
+
+@app.route("/")
+def index():
+    return send_from_directory("web", "index.html")
+
+@app.route("/<path:path>")
+def files(path):
+    return send_from_directory("web", path)
+
+@app.route("/api", methods=["POST"])
+def api():
+    data = request.json or {}
+    action = data.get("action")
+
+    if action == "version":
+        return jsonify({"version": VERSION})
+
+    if action == "create_room":
+        room = gen_code()
+        pid = gen_id()
+        rooms[room] = {
+            "room_code": room,
+            "players": [{"id": pid, "name": data.get("name","") or "Spiller"}],
+            "host_id": pid,
+            "started": False,
+            "round_index": 0,
+            "rounds_total": int(data.get("rounds", 10)),
+            "dj_index": 0,
+            "current_song": None,
+            "unused_songs": SONGS.copy(),
+            "guesses": {},
+            "scores": {pid: 0},
+            "last_round_points": {},
+            "history": [],
+            "timer_seconds": int(data.get("timer", 20)),
+            "round_started_at": None,
+            "status": "lobby"
+        }
+        return jsonify({"room": room, "player": {"id": pid}})
+
+    if action == "join":
+        room = rooms.get(data.get("room"))
+        if not room:
+            return jsonify({"error": "room_not_found"}), 400
+        pid = gen_id()
+        room["players"].append({"id": pid, "name": data.get("name","") or "Spiller"})
+        room["scores"][pid] = 0
+        room["last_round_points"][pid] = 0
+        return jsonify({"player": {"id": pid}})
+
+    if action == "state":
+        room = rooms.get(data.get("room"))
+        if not room:
+            return jsonify({"error": "room_not_found"}), 400
+        end_round_if_needed(room)
+        return jsonify(room)
+
+    if action == "start_game":
+        room = rooms.get(data.get("room"))
+        if not room:
+            return jsonify({"error": "room_not_found"}), 400
+        if not room["unused_songs"]:
+            room["unused_songs"] = SONGS.copy()
+
+        room["started"] = True
+        room["status"] = "round"
+        room["round_index"] = 0
+        room["dj_index"] = 0
+        room["guesses"] = {}
+        room["last_round_points"] = {}
+        room["history"] = []
+        room["round_started_at"] = None
+        room["current_song"] = room["unused_songs"].pop(random.randrange(len(room["unused_songs"])))
+        return jsonify({"ok": True})
+
+    if action == "start_timer":
+        room = rooms.get(data.get("room"))
+        if not room:
+            return jsonify({"error": "room_not_found"}), 400
+        room["round_started_at"] = now()
+        return jsonify({"ok": True})
+
+    if action == "submit_guess":
+        room = rooms.get(data.get("room"))
+        if not room:
+            return jsonify({"error": "room_not_found"}), 400
+
+        year = data.get("year")
+        try:
+            year = int(year)
+        except Exception:
+            return jsonify({"error": "invalid_year"}), 400
+
+        pid = data.get("player")
+        if not pid:
+            return jsonify({"error": "missing_player"}), 400
+
+        if pid == dj_id(room):
+            return jsonify({"error": "dj_cannot_guess"}), 400
+
+        if pid in room["guesses"]:
+            return jsonify({"error": "already_guessed"}), 400
+
+        room["guesses"][pid] = year
+
+        if all_non_dj_have_guessed(room):
+            end_round(room)
+
+        return jsonify({"ok": True})
+
+    if action == "next_round":
+        room = rooms.get(data.get("room"))
+        if not room:
+            return jsonify({"error": "room_not_found"}), 400
+
+        room["round_index"] += 1
+        if room["rounds_total"] and room["round_index"] >= room["rounds_total"]:
+            room["status"] = "game_over"
+            return jsonify({"ok": True})
+
+        if not room["unused_songs"]:
+            room["unused_songs"] = SONGS.copy()
+
+        room["dj_index"] = (room["dj_index"] + 1) % len(room["players"])
+        room["guesses"] = {}
+        room["last_round_points"] = {}
+        room["round_started_at"] = None
+        room["status"] = "round"
+        room["current_song"] = room["unused_songs"].pop(random.randrange(len(room["unused_songs"])))
+        return jsonify({"ok": True})
+
+    if action == "reset_game":
+        room = rooms.get(data.get("room"))
+        if not room:
+            return jsonify({"error": "room_not_found"}), 400
+        for p in room["players"]:
+            room["scores"][p["id"]] = 0
+        room["status"] = "lobby"
+        room["started"] = False
+        room["round_index"] = 0
+        room["round_started_at"] = None
+        room["unused_songs"] = SONGS.copy()
+        room["guesses"] = {}
+        room["last_round_points"] = {}
+        room["history"] = []
+        return jsonify({"ok": True})
+
+    return jsonify({"error": "unknown_action"}), 400
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8787))
+    app.run(host="0.0.0.0", port=port)

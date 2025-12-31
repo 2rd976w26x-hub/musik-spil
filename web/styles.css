@@ -1,0 +1,16 @@
+.hidden{display:none}
+button{margin:4px}
+#roomCodeDisplay{padding:6px 10px;border:1px solid #ddd;border-radius:8px;display:inline-block}
+#guessStatus{margin-top:6px}
+
+.historyCard{border:1px solid #ddd;border-radius:10px;padding:10px;margin:10px 0}
+.historyTitle{font-weight:700;margin-bottom:4px}
+.historyMeta{opacity:0.85;margin-bottom:6px}
+.historyTable{width:100%;border-collapse:collapse}
+.historyTable th,.historyTable td{border-top:1px solid #eee;padding:6px;text-align:left}
+
+#historyPanel{margin-top:18px;padding-top:10px;border-top:2px solid #eee;max-height:40vh;overflow:auto}
+
+.historyHeader{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.btnSmall{padding:4px 8px;font-size:0.9em}
+#historyPanel.collapsed #historyContainer{display:none}

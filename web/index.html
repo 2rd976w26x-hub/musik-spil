@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<title>Musik Spil</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>🎵 Musik Spil</h1>
+
+<h2 id="roomCodeDisplay" class="hidden"></h2>
+
+<div id="view-lobby">
+  <input id="nameInput" placeholder="Dit navn">
+  <button id="createBtn">Opret rum</button><br><br>
+  <input id="roomInput" placeholder="Rumkode">
+  <button id="joinBtn">Join rum</button>
+
+  <h3>Spillere</h3>
+  <ul id="lobbyPlayers"></ul>
+
+  <div id="hostControls" class="hidden">
+    <label>Tid:
+      <select id="timerSelect">
+        <option value="15">15s</option>
+        <option value="20" selected>20s</option>
+        <option value="30">30s</option>
+      </select>
+    </label>
+
+    <label>Runder:
+      <select id="roundsSelect">
+        <option value="5">5</option>
+        <option value="10" selected>10</option>
+        <option value="0">∞</option>
+      </select>
+    </label>
+
+    <button id="startGameBtn">Start spil</button>
+  </div>
+</div>
+
+<div id="view-round" class="hidden">
+  <h2 id="roundText"></h2>
+  <div id="roleText"></div>
+  <div id="timerText"></div>
+
+  <div id="djPanel" class="hidden">
+    <h3 id="djSongTitle"></h3>
+    <div id="djSongMeta"></div>
+    <a id="playLink" target="_blank" rel="noopener">Åbn sang i Spotify (tryk play)</a><br>
+    <button id="startTimerBtn">Jeg har trykket play</button>
+  </div>
+
+  <div id="guessPanel" class="hidden">
+    <input id="guessYearInput" inputmode="numeric" placeholder="Årstal (fx 1996)">
+    <button id="submitGuessBtn">Afgiv gæt</button>
+    <div id="guessStatus"></div>
+  </div>
+
+  <h3>Hvem har gættet?</h3>
+  <ul id="guessList"></ul>
+
+  <h3>Score</h3>
+  <ul id="scoreboard"></ul>
+</div>
+
+<div id="view-result" class="hidden">
+  <h3 id="resultCorrectYear"></h3>
+  <ul id="resultTable"></ul>
+  <button id="nextRoundBtn">Næste runde</button>
+</div>
+
+<div id="view-end" class="hidden">
+  <h2 id="winnerText"></h2>
+  <ul id="finalScoreboard"></ul>
+
+  <button id="newGameBtn">Nyt spil</button>
+</div>
+
+<div id="historyPanel" class="hidden">
+  <div class="historyHeader">
+    <h3>Historik (alle runder)</h3>
+    <button id="historyToggleBtn" class="btnSmall" type="button">Skjul</button>
+  </div>
+  <div id="historyContainer"></div>
+</div>
+
+<script src="client.js"></script>
+</body>
+</html>

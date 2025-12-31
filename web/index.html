@@ -8,9 +8,12 @@
 </head>
 <body>
 <div class="appShell">
-<header class="topbar"><div class="brand">🎵 Musik Spil</div><div class="topbarRight"><span id="netStatus" class="pill pillNeutral">Online</span></div></header>
+<header class="topbar"><div class="brand">🎵 Musik Spil</div><div class="topbarRight"><span id="versionText" class="pill">v?</span><span id="netStatus" class="pill pillNeutral">Online</span></div></header>
 <main class="container">
-<h2 id="roomCodeDisplay" class="roomCode hidden"></h2>
+<div class="roomTopRow">
+  <div id="roomCodeDisplay" class="roomCode hidden"></div>
+  <button id="leaveRoomBtn" class="btn btnTertiary btnSmall hidden" type="button">Forlad rum</button>
+</div>
 
 \1
   <div class="card">
@@ -39,6 +42,10 @@
         <option value="10" selected>10</option>
         <option value="0">∞</option>
       </select>
+    </label>
+
+    <label>Kategori:
+      <select id="categorySelect" class="select"></select>
     </label>
 
     <button id="startGameBtn" class="btn btnPrimary">Start spil</button>

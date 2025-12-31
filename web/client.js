@@ -1,4 +1,5 @@
 let room=null, player=null, state=null;
+let categories = [];
 
 function el(id){ return document.getElementById(id); }
 
@@ -9,6 +10,42 @@ function setNet(ok){
   ns.className = ok ? 'pill pillNeutral' : 'pill';
 }
 
+
+async function loadCategories(){
+  try{
+    const r = await api({action:'categories'});
+    categories = (r.categories || []);
+  }catch(e){
+    categories = [];
+  }
+}
+
+function populateCategorySelect(selected){
+  const sel = document.getElementById('categorySelect');
+  if(!sel) return;
+  sel.innerHTML = '';
+  const list = (state && state.available_categories && state.available_categories.length)
+    ? state.available_categories : categories;
+  (list || ['Standard']).forEach(c=>{
+    const opt = document.createElement('option');
+    opt.value = c;
+    opt.innerText = c;
+    if(selected && c === selected) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+async function loadVersion(){
+  try{
+    const r = await api({action:'version'});
+    const v = (r && r.version) ? r.version : 'v?';
+    const vt = document.getElementById('versionText');
+    if(vt) vt.innerText = v;
+  }catch(e){
+    const vt = document.getElementById('versionText');
+    if(vt) vt.innerText = 'v?';
+  }
+}
 
 async function api(d){
   const r = await fetch('/api',{
@@ -33,6 +70,8 @@ function show(id){
 function render(){
   if(!state){
     show('view-lobby');
+    const lb = document.getElementById('leaveRoomBtn');
+    if(lb) lb.classList.add('hidden');
     return;
   }
 
@@ -68,6 +107,15 @@ function renderLobby(){
   });
 
   el('hostControls').classList.toggle('hidden', !player || player.id !== state.host_id);
+
+  // Category select (host only)
+  if(player && player.id === state.host_id){
+    populateCategorySelect(state.category || 'Standard');
+  }
+
+  // Leave button
+  const lb = document.getElementById('leaveRoomBtn');
+  if(lb){ lb.classList.toggle('hidden', !room || !player); }
 }
 
 function renderRound(){
@@ -227,6 +275,8 @@ async function refreshState(){
   }
 }
 
+loadVersion();
+loadCategories();
 setInterval(refreshState, 1000);
 
 // EVENTS
@@ -260,6 +310,19 @@ el('joinBtn').onclick = async () => {
     alert('Kunne ikke joine: ' + e.message);
   }
 };
+
+const categorySelect = document.getElementById('categorySelect');
+if(categorySelect){
+  categorySelect.onchange = async () => {
+    if(!room || !player) return;
+    try{
+      await api({action:'set_category', room, player: player.id, category: categorySelect.value});
+      await refreshState();
+    }catch(e){
+      alert('Kunne ikke skifte kategori: ' + e.message);
+    }
+  };
+}
 
 el('startGameBtn').onclick = async () => {
   try{
@@ -335,3 +398,25 @@ function initHistoryToggle(){
 }
 
 initHistoryToggle();
+
+
+// Leave room
+const leaveBtn = document.getElementById('leaveRoomBtn');
+if(leaveBtn){
+  leaveBtn.onclick = async () => {
+    try{
+      if(room && player){
+        await api({action:'leave_room', room, player: player.id});
+      }
+    }catch(e){
+      // ignore
+    }
+    room = null;
+    player = null;
+    state = null;
+    const rc = document.getElementById('roomCodeDisplay');
+    if(rc){ rc.innerText=''; rc.classList.add('hidden'); }
+    leaveBtn.classList.add('hidden');
+    show('view-lobby');
+  };
+}

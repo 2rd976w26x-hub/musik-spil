@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.3.3-github-ready-nice-ui"
+VERSION = "v1.4.1-github-ready"
 rooms = {}
 
 def gen_code(n=4):
@@ -17,9 +17,37 @@ def gen_id():
 def now():
     return time.time()
 
-with open("web/songs.json", encoding="utf-8") as f:
-    SONGS = json.load(f)
+def load_songsets():
+    """Load all song json files from web/. Supports songs.json and songs_*.json."""
+    songsets = {}
+    # Default
+    try:
+        with open("web/songs.json", encoding="utf-8") as f:
+            songsets["Standard"] = json.load(f)
+    except Exception:
+        songsets["Standard"] = []
+    # Extra categories
+    import glob, os
+    for path in glob.glob("web/songs_*.json"):
+        name = os.path.basename(path)
+        # songs_Danske 1960 til 2025.json -> Danske 1960 til 2025
+        cat = name[len("songs_"):-len(".json")]
+        cat = cat.replace("_", " ").strip()
+        if not cat:
+            continue
+        try:
+            with open(path, encoding="utf-8") as f:
+                songsets[cat] = json.load(f)
+        except Exception:
+            pass
+    return songsets
 
+SONGSETS = load_songsets()
+
+def get_songs_for_category(category: str):
+    if not category:
+        category = "Standard"
+    return SONGSETS.get(category) or SONGSETS.get("Standard") or []
 def points_for_guess(guess: int, correct: int) -> int:
     d = abs(int(guess) - int(correct))
     return 3 if d == 0 else 2 if d == 1 else 1 if d == 2 else 0
@@ -150,7 +178,8 @@ def api():
             "rounds_total": int(data.get("rounds", 10)),
             "dj_index": 0,
             "current_song": None,
-            "unused_songs": SONGS.copy(),
+            "category": data.get("category") or "Standard",
+            "unused_songs": get_songs_for_category(data.get("category") or "Standard").copy(),
             "guesses": {},
             "scores": {pid: 0},
             "last_round_points": {},
@@ -176,6 +205,7 @@ def api():
         if not room:
             return jsonify({"error": "room_not_found"}), 400
         end_round_if_needed(room)
+        room['available_categories'] = sorted(SONGSETS.keys())
         return jsonify(room)
 
     if action == "start_game":
@@ -183,7 +213,7 @@ def api():
         if not room:
             return jsonify({"error": "room_not_found"}), 400
         if not room["unused_songs"]:
-            room["unused_songs"] = SONGS.copy()
+            room["unused_songs"] = get_songs_for_category(room.get("category")).copy()
 
         room["started"] = True
         room["status"] = "round"
@@ -242,7 +272,7 @@ def api():
             return jsonify({"ok": True})
 
         if not room["unused_songs"]:
-            room["unused_songs"] = SONGS.copy()
+            room["unused_songs"] = get_songs_for_category(room.get("category")).copy()
 
         room["dj_index"] = (room["dj_index"] + 1) % len(room["players"])
         room["guesses"] = {}
@@ -262,11 +292,72 @@ def api():
         room["started"] = False
         room["round_index"] = 0
         room["round_started_at"] = None
-        room["unused_songs"] = SONGS.copy()
+        room["unused_songs"] = get_songs_for_category(room.get("category")).copy()
         room["guesses"] = {}
         room["last_round_points"] = {}
         room["history"] = []
         return jsonify({"ok": True})
+
+
+if action == "categories":
+    return jsonify({"categories": sorted(SONGSETS.keys())})
+
+if action == "set_category":
+    room = rooms.get(data.get("room"))
+    if not room:
+        return jsonify({"error": "room_not_found"}), 400
+    if room.get("started"):
+        return jsonify({"error": "already_started"}), 400
+    pid = data.get("player")
+    if pid != room.get("host_id"):
+        return jsonify({"error": "not_host"}), 400
+    cat = data.get("category") or "Standard"
+    if cat not in SONGSETS:
+        return jsonify({"error": "bad_category"}), 400
+    room["category"] = cat
+    room["unused_songs"] = get_songs_for_category(cat).copy()
+    room["current_song"] = None
+    room["guesses"] = {}
+    room["last_round_points"] = {}
+    return jsonify({"ok": True})
+
+if action == "leave_room":
+    room_code = data.get("room")
+    pid = data.get("player")
+    room = rooms.get(room_code)
+    if not room:
+        return jsonify({"ok": True})
+    room["players"] = [p for p in room.get("players", []) if p.get("id") != pid]
+    # remove from maps
+    if pid in room.get("scores", {}):
+        room["scores"].pop(pid, None)
+    if pid in room.get("guesses", {}):
+        room["guesses"].pop(pid, None)
+    if pid in room.get("last_round_points", {}):
+        room["last_round_points"].pop(pid, None)
+
+    # if no players left, delete room
+    if not room["players"]:
+        rooms.pop(room_code, None)
+        return jsonify({"ok": True})
+
+    # if host left, transfer host
+    if room.get("host_id") == pid:
+        room["host_id"] = room["players"][0]["id"]
+
+    # clamp dj_index
+    if room.get("dj_index", 0) >= len(room["players"]):
+        room["dj_index"] = 0
+
+    # if game started and only 1 player left, end game
+    if room.get("started") and len(room["players"]) < 2:
+        room["status"] = "lobby"
+        room["started"] = False
+        room["round_started_at"] = None
+        room["current_song"] = None
+        room["guesses"] = {}
+        room["last_round_points"] = {}
+    return jsonify({"ok": True})
 
     return jsonify({"error": "unknown_action"}), 400
 

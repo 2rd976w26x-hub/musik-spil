@@ -163,3 +163,7 @@ li{margin:6px 0}
 
 .pill{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;font-size:12px;border:1px solid var(--border);background:#fff;color:var(--muted)}
 .pillNeutral::before{content:"";width:8px;height:8px;border-radius:99px;background:#34C759;display:inline-block}
+
+.roomTopRow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:10px 0 14px 0}
+
+#versionText{opacity:.9}

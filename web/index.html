@@ -1,27 +1,31 @@
 <!doctype html>
 <html lang="da">
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta charset="utf-8">
 <title>Musik Spil</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<h1>🎵 Musik Spil</h1>
+<div class="appShell">
+<header class="topbar"><div class="brand">🎵 Musik Spil</div><div class="topbarRight"><span id="netStatus" class="pill pillNeutral">Online</span></div></header>
+<main class="container">
 
-<h2 id="roomCodeDisplay" class="hidden"></h2>
+
+<h2 id="roomCodeDisplay" class="roomCode hidden" class="hidden"></h2>
 
 <div id="view-lobby">
-  <input id="nameInput" placeholder="Dit navn">
-  <button id="createBtn">Opret rum</button><br><br>
-  <input id="roomInput" placeholder="Rumkode">
-  <button id="joinBtn">Join rum</button>
+  <input id="nameInput" class="input" placeholder="Dit navn">
+  <button id="createBtn" class="btn btnPrimary">Opret rum</button><br><br>
+  <input id="roomInput" class="input" placeholder="Rumkode">
+  <button id="joinBtn" class="btn btnSecondary">Join rum</button>
 
-  <h3>Spillere</h3>
+  <h3 class="sectionTitle">Spillere</h3>
   <ul id="lobbyPlayers"></ul>
 
   <div id="hostControls" class="hidden">
     <label>Tid:
-      <select id="timerSelect">
+      <select id="timerSelect" class="select">
         <option value="15">15s</option>
         <option value="20" selected>20s</option>
         <option value="30">30s</option>
@@ -29,14 +33,16 @@
     </label>
 
     <label>Runder:
-      <select id="roundsSelect">
+      <select id="roundsSelect" class="select">
         <option value="5">5</option>
         <option value="10" selected>10</option>
         <option value="0">∞</option>
       </select>
     </label>
 
-    <button id="startGameBtn">Start spil</button>
+    <button id="startGameBtn" class="btn btnPrimary">Start spil</button>
+  </div>
+    </div>
   </div>
 </div>
 
@@ -48,44 +54,51 @@
   <div id="djPanel" class="hidden">
     <h3 id="djSongTitle"></h3>
     <div id="djSongMeta"></div>
-    <a id="playLink" target="_blank" rel="noopener">Åbn sang i Spotify (tryk play)</a><br>
-    <button id="startTimerBtn">Jeg har trykket play</button>
+    <button id="playBtn" class="btn btnSecondary" type="button">Åbn sang i Spotify</button>
+    <a id="playLink" class="hidden" target="_blank" rel="noopener">fallback</a><br>
+    <button id="startTimerBtn" class="btn btnPrimary">Jeg har trykket play</button>
   </div>
 
   <div id="guessPanel" class="hidden">
-    <input id="guessYearInput" inputmode="numeric" placeholder="Årstal (fx 1996)">
-    <button id="submitGuessBtn">Afgiv gæt</button>
-    <div id="guessStatus"></div>
+    <input id="guessYearInput" class="input" inputmode="numeric" placeholder="Årstal (fx 1996)">
+    <button id="submitGuessBtn" class="btn btnPrimary">Afgiv gæt</button>
+    <div id="guessStatus" class="hintText"></div>
   </div>
 
-  <h3>Hvem har gættet?</h3>
+  <h3 class="sectionTitle">Hvem har gættet?</h3>
   <ul id="guessList"></ul>
 
-  <h3>Score</h3>
+  <h3 class="sectionTitle">Score</h3>
   <ul id="scoreboard"></ul>
 </div>
 
 <div id="view-result" class="hidden">
-  <h3 id="resultCorrectYear"></h3>
+  <h3 id="resultCorrectYear" class="resultYear"></h3>
   <ul id="resultTable"></ul>
-  <button id="nextRoundBtn">Næste runde</button>
+  <button id="nextRoundBtn" class="btn btnPrimary">Næste runde</button>
 </div>
 
 <div id="view-end" class="hidden">
+  <div class="card">
+    <div class="cardHeader"><h2 class="cardTitle">Slut</h2></div>
+    <div class="cardBody">
   <h2 id="winnerText"></h2>
   <ul id="finalScoreboard"></ul>
 
-  <button id="newGameBtn">Nyt spil</button>
+  <button id="newGameBtn" class="btn btnPrimary">Nyt spil</button>
 </div>
 
 <div id="historyPanel" class="hidden">
   <div class="historyHeader">
     <h3>Historik (alle runder)</h3>
-    <button id="historyToggleBtn" class="btnSmall" type="button">Skjul</button>
+    <button id="historyToggleBtn" class="btn btnTertiary btnSmall" class="btnSmall" type="button">Skjul</button>
   </div>
   <div id="historyContainer"></div>
 </div>
 
 <script src="client.js"></script>
+</main>
+<footer class="footer">Tip: Installer som app (PWA) via Del → “Føj til hjemmeskærm”.</footer>
+</div>
 </body>
 </html>

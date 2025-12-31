@@ -1,3 +1,31 @@
+let coverTimer = null;
+const covers = [
+  'covers/cover1.svg',
+  'covers/cover2.svg',
+  'covers/cover3.svg',
+  'covers/cover4.svg',
+  'covers/cover5.svg'
+];
+
+function startCoverRotation(){
+  const img = document.getElementById('coverImg');
+  if(!img) return;
+  stopCoverRotation();
+  let idx = Math.floor(Math.random()*covers.length);
+  img.src = covers[idx];
+  coverTimer = setInterval(()=>{
+    idx = (idx + 1) % covers.length;
+    img.src = covers[idx];
+  }, 3000);
+}
+
+function stopCoverRotation(){
+  if(coverTimer){
+    clearInterval(coverTimer);
+    coverTimer = null;
+  }
+}
+
 let room=null, player=null, state=null;
 let categories = [];
 
@@ -119,6 +147,8 @@ function renderLobby(){
 }
 
 function renderRound(){
+  startCoverRotation();
+
   const dj = state.players[state.dj_index];
   const isDJ = player && player.id === dj.id;
 
@@ -155,13 +185,16 @@ function renderRound(){
     sb.appendChild(li);
   });
 
+  const tt = el('timerText');
+  if(!tt) return;
+
   if(state.round_started_at){
     const left = Math.max(0, Math.ceil(
       state.timer_seconds - (Date.now()/1000 - state.round_started_at)
     ));
-    el('timerText').innerText = 'Tid tilbage: ' + left + 's';
+    tt.innerText = 'Tid tilbage: ' + left + 's';
   } else {
-    el('timerText').innerText = 'Venter på DJ…';
+    tt.innerText = 'Venter på DJ…';
   }
 
   const gs = el('guessStatus');
@@ -171,6 +204,8 @@ function renderRound(){
 }
 
 function renderResult(){
+  stopCoverRotation();
+
   el('resultCorrectYear').innerText = 'Korrekt år: ' + state.current_song.year;
 
   const dj = state.players[state.dj_index];
@@ -193,6 +228,8 @@ function renderResult(){
 }
 
 function renderEnd(){
+  stopCoverRotation();
+
   const scores = (state.players||[])
     .map(p=>({name:p.name,score:(state.scores?.[p.id] ?? 0)}))
     .sort((a,b)=>b.score-a.score);
@@ -335,9 +372,10 @@ el('startGameBtn').onclick = async () => {
 
 el('startTimerBtn').onclick = async () => {
   try{
-    await api({action:'start_timer', room});
+    const r = await api({action:'start_timer', room, player: player ? player.id : null});
+    if(r && r.round_started_at){ state.round_started_at = r.round_started_at; }
     await refreshState();
-  }catch(e){
+}catch(e){
     alert('Kunne ikke starte timer: ' + e.message);
   }
 };

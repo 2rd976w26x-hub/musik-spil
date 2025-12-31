@@ -169,3 +169,16 @@ li{margin:6px 0}
 #versionText{opacity:.9}
 
 .btn.disabled, .btn:disabled{opacity:.55;cursor:not-allowed}
+
+.coverWrap{
+  display:flex;
+  justify-content:center;
+  margin:14px 0;
+}
+#coverImg{
+  width:220px;
+  height:220px;
+  border-radius:18px;
+  box-shadow:0 12px 30px rgba(0,0,0,.25);
+  object-fit:cover;
+}

@@ -32,7 +32,7 @@ def pick_next_song(room: dict) -> dict | None:
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.5.2-github-ready"
+VERSION = "v1.5.3-github-ready"
 rooms = {}
 
 def gen_code(n=4):
@@ -70,6 +70,25 @@ def load_songsets():
     return songsets
 
 SONGSETS = load_songsets()
+
+# Default category (first available) so we never end up with an empty song list
+DEFAULT_CATEGORY = next(iter(sorted(SONGSETS.keys())), None)
+if DEFAULT_CATEGORY is None:
+    # Fallback so server still boots even if no song files are present
+    DEFAULT_CATEGORY = "Standard"
+
+def normalize_category(cat: str | None) -> str:
+    """Return a valid category key present in SONGSETS, or DEFAULT_CATEGORY."""
+    if not cat:
+        return DEFAULT_CATEGORY
+    if cat in SONGSETS:
+        return cat
+    # Accept case-insensitive match
+    for k in SONGSETS.keys():
+        if k.lower() == str(cat).lower():
+            return k
+    return DEFAULT_CATEGORY
+
 
 def get_songs_for_category(category: str):
     if not category:
@@ -250,6 +269,9 @@ def api():
         room["last_round_points"] = {}
         room["history"] = []
         room["round_started_at"] = None
+        # Safety: ensure we actually have songs in this category
+        if not get_songs_for_category(category):
+            return jsonify({"ok": False, "error": "no_songs", "message": f"Ingen sange fundet for kategori '{category}'"}), 400
         room["current_song"] = pick_next_song(room)
         if room["current_song"] is None:
             return jsonify({"ok": False, "error": "no_songs_loaded"})

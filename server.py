@@ -3,9 +3,36 @@ import random, string, time, json
 from copy import deepcopy
 import os
 
+
+def get_songset_for_room(room: dict) -> list:
+    """Return the list of songs for the room's chosen category (fallback to any available)."""
+    cat = room.get("category")
+    if cat and cat in SONGSETS:
+        return SONGSETS[cat]
+    # fallback: first available songset
+    if SONGSETS:
+        first_key = sorted(SONGSETS.keys())[0]
+        room["category"] = first_key
+        return SONGSETS[first_key]
+    return []
+
+def refill_unused_songs(room: dict) -> None:
+    """Refill room['unused_songs'] from its songset when empty."""
+    songs = list(get_songset_for_room(room))
+    room["unused_songs"] = songs[:]  # copy
+
+def pick_next_song(room: dict) -> dict | None:
+    """Pop a random next song from room['unused_songs'] (refill if needed)."""
+    if not room.get("unused_songs"):
+        refill_unused_songs(room)
+    if not room.get("unused_songs"):
+        return None
+    i = random.randrange(len(room["unused_songs"]))
+    return room["unused_songs"].pop(i)
+
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.5.0-github-ready"
+VERSION = "v1.5.2-github-ready"
 rooms = {}
 
 def gen_code(n=4):
@@ -223,7 +250,9 @@ def api():
         room["last_round_points"] = {}
         room["history"] = []
         room["round_started_at"] = None
-        room["current_song"] = room["unused_songs"].pop(random.randrange(len(room["unused_songs"])))
+        room["current_song"] = pick_next_song(room)
+        if room["current_song"] is None:
+            return jsonify({"ok": False, "error": "no_songs_loaded"})
         return jsonify({"ok": True})
 
     if action == "start_timer":
@@ -291,7 +320,9 @@ def api():
         room["last_round_points"] = {}
         room["round_started_at"] = None
         room["status"] = "round"
-        room["current_song"] = room["unused_songs"].pop(random.randrange(len(room["unused_songs"])))
+        room["current_song"] = pick_next_song(room)
+        if room["current_song"] is None:
+            return jsonify({"ok": False, "error": "no_songs_loaded"})
         return jsonify({"ok": True})
 
     if action == "reset_game":

@@ -1,0 +1,650 @@
+[
+  {
+    "year": 1968,
+    "title": "(Sittin' On) the Dock of the Bay",
+    "artist": "Otis Redding",
+    "spotifyUrl": "https://open.spotify.com/search/%28Sittin%27%20On%29%20the%20Dock%20of%20the%20Bay%20Otis%20Redding"
+  },
+  {
+    "year": 2003,
+    "title": "Kinky Fætter",
+    "artist": "Suspekt",
+    "spotifyUrl": "https://open.spotify.com/search/Kinky%20F%C3%A6tter%20Suspekt"
+  },
+  {
+    "year": 1987,
+    "title": "Sweet Child O' Mine",
+    "artist": "Guns N' Roses",
+    "spotifyUrl": "https://open.spotify.com/search/Sweet%20Child%20O%27%20Mine%20Guns%20N%27%20Roses"
+  },
+  {
+    "year": 1986,
+    "title": "Livin' On A Prayer",
+    "artist": "Bon Jovi",
+    "spotifyUrl": "https://open.spotify.com/search/Livin%27%20On%20A%20Prayer%20Bon%20Jovi"
+  },
+  {
+    "year": 2021,
+    "title": "Shivers",
+    "artist": "Ed Sheeran",
+    "spotifyUrl": "https://open.spotify.com/search/Shivers%20Ed%20Sheeran"
+  },
+  {
+    "year": 2023,
+    "title": "The Door",
+    "artist": "Teddy Swims",
+    "spotifyUrl": "https://open.spotify.com/search/The%20Door%20Teddy%20Swims"
+  },
+  {
+    "year": 2024,
+    "title": "Austin (Boots Stop Workin')",
+    "artist": "Dasha",
+    "spotifyUrl": "https://open.spotify.com/search/Austin%20%28Boots%20Stop%20Workin%27%29%20Dasha"
+  },
+  {
+    "year": 2025,
+    "title": "Bad Dreams",
+    "artist": "Teddy Swims",
+    "spotifyUrl": "https://open.spotify.com/search/Bad%20Dreams%20Teddy%20Swims"
+  },
+  {
+    "year": 2024,
+    "title": "The Sound of Silence - CYRIL Remix",
+    "artist": "Disturbed;CYRIL",
+    "spotifyUrl": "https://open.spotify.com/search/The%20Sound%20of%20Silence%20-%20CYRIL%20Remix%20Disturbed%3BCYRIL"
+  },
+  {
+    "year": 2024,
+    "title": "Beautiful Things",
+    "artist": "Benson Boone",
+    "spotifyUrl": "https://open.spotify.com/search/Beautiful%20Things%20Benson%20Boone"
+  },
+  {
+    "year": 2024,
+    "title": "A Bar Song (Tipsy)",
+    "artist": "Shaboozey",
+    "spotifyUrl": "https://open.spotify.com/search/A%20Bar%20Song%20%28Tipsy%29%20Shaboozey"
+  },
+  {
+    "year": 2023,
+    "title": "Stumblin' In",
+    "artist": "CYRIL",
+    "spotifyUrl": "https://open.spotify.com/search/Stumblin%27%20In%20CYRIL"
+  },
+  {
+    "year": 1979,
+    "title": "Boogie Wonderland (with The Emotions)",
+    "artist": "Earth",
+    "spotifyUrl": "https://open.spotify.com/search/Boogie%20Wonderland%20%28with%20The%20Emotions%29%20Earth"
+  },
+  {
+    "year": 1979,
+    "title": "More Than A Woman",
+    "artist": "Bee Gees",
+    "spotifyUrl": "https://open.spotify.com/search/More%20Than%20A%20Woman%20Bee%20Gees"
+  },
+  {
+    "year": 1965,
+    "title": "My Girl",
+    "artist": "The Temptations",
+    "spotifyUrl": "https://open.spotify.com/search/My%20Girl%20The%20Temptations"
+  },
+  {
+    "year": 1974,
+    "title": "Can't Get Enough Of Your Love, Babe",
+    "artist": "Barry White",
+    "spotifyUrl": "https://open.spotify.com/search/Can%27t%20Get%20Enough%20Of%20Your%20Love%2C%20Babe%20Barry%20White"
+  },
+  {
+    "year": 1960,
+    "title": "(What A) Wonderful World - Mono",
+    "artist": "Sam Cooke",
+    "spotifyUrl": "https://open.spotify.com/search/%28What%20A%29%20Wonderful%20World%20-%20Mono%20Sam%20Cooke"
+  },
+  {
+    "year": 1986,
+    "title": "You Can Call Me Al",
+    "artist": "Paul Simon",
+    "spotifyUrl": "https://open.spotify.com/search/You%20Can%20Call%20Me%20Al%20Paul%20Simon"
+  },
+  {
+    "year": 1969,
+    "title": "Here Comes The Sun - Remastered 2009",
+    "artist": "The Beatles",
+    "spotifyUrl": "https://open.spotify.com/search/Here%20Comes%20The%20Sun%20-%20Remastered%202009%20The%20Beatles"
+  },
+  {
+    "year": 1988,
+    "title": "You're The First, The Last, My Everything - Edit",
+    "artist": "Barry White",
+    "spotifyUrl": "https://open.spotify.com/search/You%27re%20The%20First%2C%20The%20Last%2C%20My%20Everything%20-%20Edit%20Barry%20White"
+  },
+  {
+    "year": 1976,
+    "title": "Sir Duke",
+    "artist": "Stevie Wonder",
+    "spotifyUrl": "https://open.spotify.com/search/Sir%20Duke%20Stevie%20Wonder"
+  },
+  {
+    "year": 1992,
+    "title": "All Night Long (All Night) - Single Version",
+    "artist": "Lionel Richie",
+    "spotifyUrl": "https://open.spotify.com/search/All%20Night%20Long%20%28All%20Night%29%20-%20Single%20Version%20Lionel%20Richie"
+  },
+  {
+    "year": 2002,
+    "title": "Don't Know Why",
+    "artist": "Norah Jones",
+    "spotifyUrl": "https://open.spotify.com/search/Don%27t%20Know%20Why%20Norah%20Jones"
+  },
+  {
+    "year": 1987,
+    "title": "Pour Some Sugar On Me",
+    "artist": "Def Leppard",
+    "spotifyUrl": "https://open.spotify.com/search/Pour%20Some%20Sugar%20On%20Me%20Def%20Leppard"
+  },
+  {
+    "year": 1968,
+    "title": "For Once In My Life",
+    "artist": "Stevie Wonder",
+    "spotifyUrl": "https://open.spotify.com/search/For%20Once%20In%20My%20Life%20Stevie%20Wonder"
+  },
+  {
+    "year": 2023,
+    "title": "Lose Control",
+    "artist": "Teddy Swims",
+    "spotifyUrl": "https://open.spotify.com/search/Lose%20Control%20Teddy%20Swims"
+  },
+  {
+    "year": 1991,
+    "title": "One",
+    "artist": "U2",
+    "spotifyUrl": "https://open.spotify.com/search/One%20U2"
+  },
+  {
+    "year": 1993,
+    "title": "Mr. Jones",
+    "artist": "Counting Crows",
+    "spotifyUrl": "https://open.spotify.com/search/Mr.%20Jones%20Counting%20Crows"
+  },
+  {
+    "year": 2023,
+    "title": "Giv Os Lyset Tilbage",
+    "artist": "Trine Therkelsen",
+    "spotifyUrl": "https://open.spotify.com/search/Giv%20Os%20Lyset%20Tilbage%20Trine%20Therkelsen"
+  },
+  {
+    "year": 2011,
+    "title": "Mr. Saxobeat - Radio Edit",
+    "artist": "Alexandra Stan",
+    "spotifyUrl": "https://open.spotify.com/search/Mr.%20Saxobeat%20-%20Radio%20Edit%20Alexandra%20Stan"
+  },
+  {
+    "year": 2016,
+    "title": "Ecuador - Original Radio Edit",
+    "artist": "Sash!",
+    "spotifyUrl": "https://open.spotify.com/search/Ecuador%20-%20Original%20Radio%20Edit%20Sash%21"
+  },
+  {
+    "year": 2022,
+    "title": "hjem fra fabrikken",
+    "artist": "andreas odbjerg",
+    "spotifyUrl": "https://open.spotify.com/search/hjem%20fra%20fabrikken%20andreas%20odbjerg"
+  },
+  {
+    "year": 2022,
+    "title": "Under Din Sne",
+    "artist": "The Minds Of 99",
+    "spotifyUrl": "https://open.spotify.com/search/Under%20Din%20Sne%20The%20Minds%20Of%2099"
+  },
+  {
+    "year": 1968,
+    "title": "What A Wonderful World",
+    "artist": "Louis Armstrong",
+    "spotifyUrl": "https://open.spotify.com/search/What%20A%20Wonderful%20World%20Louis%20Armstrong"
+  },
+  {
+    "year": 2011,
+    "title": "Baby, It's Cold Outside",
+    "artist": "Theo;Ali",
+    "spotifyUrl": "https://open.spotify.com/search/Baby%2C%20It%27s%20Cold%20Outside%20Theo%3BAli"
+  },
+  {
+    "year": 1979,
+    "title": "My Sharona",
+    "artist": "The Knack",
+    "spotifyUrl": "https://open.spotify.com/search/My%20Sharona%20The%20Knack"
+  },
+  {
+    "year": 1980,
+    "title": "Back In Black",
+    "artist": "AC/DC",
+    "spotifyUrl": "https://open.spotify.com/search/Back%20In%20Black%20AC/DC"
+  },
+  {
+    "year": 2010,
+    "title": "Min Baby Bor i Højhus",
+    "artist": "Shu-Bi-Dua",
+    "spotifyUrl": "https://open.spotify.com/search/Min%20Baby%20Bor%20i%20H%C3%B8jhus%20Shu-Bi-Dua"
+  },
+  {
+    "year": 2010,
+    "title": "Danmark",
+    "artist": "Shu-Bi-Dua",
+    "spotifyUrl": "https://open.spotify.com/search/Danmark%20Shu-Bi-Dua"
+  },
+  {
+    "year": 2006,
+    "title": "Om Solen Er Så Rød Mor - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20Solen%20Er%20S%C3%A5%20R%C3%B8d%20Mor%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 1974,
+    "title": "You Ain't Seen Nothing Yet",
+    "artist": "Bachman-Turner Overdrive",
+    "spotifyUrl": "https://open.spotify.com/search/You%20Ain%27t%20Seen%20Nothing%20Yet%20Bachman-Turner%20Overdrive"
+  },
+  {
+    "year": 2015,
+    "title": "Vågner I Natten",
+    "artist": "Dodo & the Dodos",
+    "spotifyUrl": "https://open.spotify.com/search/V%C3%A5gner%20I%20Natten%20Dodo%20%26%20the%20Dodos"
+  },
+  {
+    "year": 2006,
+    "title": "Om Høstfesten - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20H%C3%B8stfesten%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om For Længe, Længe Siden - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20For%20L%C3%A6nge%2C%20L%C3%A6nge%20Siden%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "For Længe, Længe Siden - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/For%20L%C3%A6nge%2C%20L%C3%A6nge%20Siden%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om Lilly Fra Løkken - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20Lilly%20Fra%20L%C3%B8kken%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Lilly Fra Løkken - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Lilly%20Fra%20L%C3%B8kken%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om Kære Øjeblik - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20K%C3%A6re%20%C3%98jeblik%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Kære Øjeblik - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/K%C3%A6re%20%C3%98jeblik%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om Digteren - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20Digteren%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om Over En Gyngende Grund - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20Over%20En%20Gyngende%20Grund%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Over En Gyngende Grund - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Over%20En%20Gyngende%20Grund%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om Jeg Vil Være En Stjerne - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20Jeg%20Vil%20V%C3%A6re%20En%20Stjerne%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Jeg Vil Være En Stjerne - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Jeg%20Vil%20V%C3%A6re%20En%20Stjerne%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om Bag Mariekirkens Tårn - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20Bag%20Mariekirkens%20T%C3%A5rn%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Bag Mariekirkens Tårn - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Bag%20Mariekirkens%20T%C3%A5rn%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om Flyv Endelig Højere - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20Flyv%20Endelig%20H%C3%B8jere%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Flyv Endelig Højere - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Flyv%20Endelig%20H%C3%B8jere%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om Hvidsten Kro - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20Hvidsten%20Kro%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "I Regnbuens Rige - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/I%20Regnbuens%20Rige%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om Den Herreløse Hund - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20Den%20Herrel%C3%B8se%20Hund%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Den Herreløse Hund - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Den%20Herrel%C3%B8se%20Hund%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Solen Er Så Rød Mor - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Solen%20Er%20S%C3%A5%20R%C3%B8d%20Mor%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om Fedtmule & Mickey Mouse - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20Fedtmule%20%26%20Mickey%20Mouse%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Fedtmule & Mickey Mouse - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Fedtmule%20%26%20Mickey%20Mouse%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Rosen Min - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Rosen%20Min%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om Ovre Bag Ved Egeholm - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20Ovre%20Bag%20Ved%20Egeholm%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Ovre Bag Ved Egholm - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Ovre%20Bag%20Ved%20Egholm%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om Dansen Går - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20Dansen%20G%C3%A5r%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Dansen Går - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Dansen%20G%C3%A5r%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om Hvor Går Vi Hen Når Vi Går? - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20Hvor%20G%C3%A5r%20Vi%20Hen%20N%C3%A5r%20Vi%20G%C3%A5r%3F%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Hvor Går Vi Hen Når Vi Går? - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Hvor%20G%C3%A5r%20Vi%20Hen%20N%C3%A5r%20Vi%20G%C3%A5r%3F%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om Gi' Det Blå Tilbage - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20Gi%27%20Det%20Bl%C3%A5%20Tilbage%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Gi' Det Blå Tilbage - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Gi%27%20Det%20Bl%C3%A5%20Tilbage%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om Kald Det Kærlighed - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20Kald%20Det%20K%C3%A6rlighed%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Kald Det Kærlighed - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Kald%20Det%20K%C3%A6rlighed%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Om Held Og Lykke - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Om%20Held%20Og%20Lykke%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Held Og Lykke - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Held%20Og%20Lykke%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Digteren - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Digteren%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 2006,
+    "title": "Hvidsten Kro - Live",
+    "artist": "Lars Lilholt",
+    "spotifyUrl": "https://open.spotify.com/search/Hvidsten%20Kro%20-%20Live%20Lars%20Lilholt"
+  },
+  {
+    "year": 1998,
+    "title": "Onkel Christian",
+    "artist": "Lars Lilholt Band",
+    "spotifyUrl": "https://open.spotify.com/search/Onkel%20Christian%20Lars%20Lilholt%20Band"
+  },
+  {
+    "year": 1973,
+    "title": "Warm Love",
+    "artist": "Van Morrison",
+    "spotifyUrl": "https://open.spotify.com/search/Warm%20Love%20Van%20Morrison"
+  },
+  {
+    "year": 2000,
+    "title": "Gotta Find a Job",
+    "artist": "Lee Dorsey",
+    "spotifyUrl": "https://open.spotify.com/search/Gotta%20Find%20a%20Job%20Lee%20Dorsey"
+  },
+  {
+    "year": 2012,
+    "title": "Ordinary Things",
+    "artist": "Lukas Graham",
+    "spotifyUrl": "https://open.spotify.com/search/Ordinary%20Things%20Lukas%20Graham"
+  },
+  {
+    "year": 2012,
+    "title": "Spirit in the Sky",
+    "artist": "Norman Greenbaum",
+    "spotifyUrl": "https://open.spotify.com/search/Spirit%20in%20the%20Sky%20Norman%20Greenbaum"
+  },
+  {
+    "year": 1995,
+    "title": "Give Me One Reason",
+    "artist": "Tracy Chapman",
+    "spotifyUrl": "https://open.spotify.com/search/Give%20Me%20One%20Reason%20Tracy%20Chapman"
+  },
+  {
+    "year": 1972,
+    "title": "Your Song",
+    "artist": "Billy Paul",
+    "spotifyUrl": "https://open.spotify.com/search/Your%20Song%20Billy%20Paul"
+  },
+  {
+    "year": 2015,
+    "title": "Painkillers",
+    "artist": "Patrick Dorgan",
+    "spotifyUrl": "https://open.spotify.com/search/Painkillers%20Patrick%20Dorgan"
+  },
+  {
+    "year": 2015,
+    "title": "On The Way Down",
+    "artist": "Patrick Dorgan",
+    "spotifyUrl": "https://open.spotify.com/search/On%20The%20Way%20Down%20Patrick%20Dorgan"
+  },
+  {
+    "year": 2015,
+    "title": "Amazing",
+    "artist": "Patrick Dorgan",
+    "spotifyUrl": "https://open.spotify.com/search/Amazing%20Patrick%20Dorgan"
+  },
+  {
+    "year": 2015,
+    "title": "Bitter",
+    "artist": "Patrick Dorgan",
+    "spotifyUrl": "https://open.spotify.com/search/Bitter%20Patrick%20Dorgan"
+  },
+  {
+    "year": 2015,
+    "title": "I Would If I Could",
+    "artist": "Patrick Dorgan",
+    "spotifyUrl": "https://open.spotify.com/search/I%20Would%20If%20I%20Could%20Patrick%20Dorgan"
+  },
+  {
+    "year": 2015,
+    "title": "Risky Business",
+    "artist": "Patrick Dorgan",
+    "spotifyUrl": "https://open.spotify.com/search/Risky%20Business%20Patrick%20Dorgan"
+  },
+  {
+    "year": 2015,
+    "title": "Hollywood",
+    "artist": "Patrick Dorgan",
+    "spotifyUrl": "https://open.spotify.com/search/Hollywood%20Patrick%20Dorgan"
+  },
+  {
+    "year": 2015,
+    "title": "Lullaby",
+    "artist": "Patrick Dorgan",
+    "spotifyUrl": "https://open.spotify.com/search/Lullaby%20Patrick%20Dorgan"
+  },
+  {
+    "year": 2015,
+    "title": "Marilyn",
+    "artist": "Patrick Dorgan",
+    "spotifyUrl": "https://open.spotify.com/search/Marilyn%20Patrick%20Dorgan"
+  },
+  {
+    "year": 2015,
+    "title": "Amy",
+    "artist": "Patrick Dorgan",
+    "spotifyUrl": "https://open.spotify.com/search/Amy%20Patrick%20Dorgan"
+  },
+  {
+    "year": 2003,
+    "title": "One More Time",
+    "artist": "Redbone",
+    "spotifyUrl": "https://open.spotify.com/search/One%20More%20Time%20Redbone"
+  },
+  {
+    "year": 1987,
+    "title": "Heaven Is A Place On Earth",
+    "artist": "Belinda Carlisle",
+    "spotifyUrl": "https://open.spotify.com/search/Heaven%20Is%20A%20Place%20On%20Earth%20Belinda%20Carlisle"
+  },
+  {
+    "year": 2013,
+    "title": "Stærk Tobak",
+    "artist": "Shu-Bi-Dua",
+    "spotifyUrl": "https://open.spotify.com/search/St%C3%A6rk%20Tobak%20Shu-Bi-Dua"
+  },
+  {
+    "year": 2013,
+    "title": "Hvalen Hvalborg (Karaoke Version) - Originally Performed By Shu Bi Dua",
+    "artist": "A-Type Player",
+    "spotifyUrl": "https://open.spotify.com/search/Hvalen%20Hvalborg%20%28Karaoke%20Version%29%20-%20Originally%20Performed%20By%20Shu%20Bi%20Dua%20A-Type%20Player"
+  },
+  {
+    "year": 2013,
+    "title": "Vuffelivov (Karaoke Version) - Originally Performed By Shu Bi Dua",
+    "artist": "A-Type Player",
+    "spotifyUrl": "https://open.spotify.com/search/Vuffelivov%20%28Karaoke%20Version%29%20-%20Originally%20Performed%20By%20Shu%20Bi%20Dua%20A-Type%20Player"
+  },
+  {
+    "year": 2013,
+    "title": "Den Røde Tråd (Karaoke Version) - Originally Performed By Shu Bi Dua",
+    "artist": "A-Type Player",
+    "spotifyUrl": "https://open.spotify.com/search/Den%20R%C3%B8de%20Tr%C3%A5d%20%28Karaoke%20Version%29%20-%20Originally%20Performed%20By%20Shu%20Bi%20Dua%20A-Type%20Player"
+  },
+  {
+    "year": 2013,
+    "title": "Kom Tilbage Nu (Karaoke Version) - Originally Performed By Shu Bi Dua",
+    "artist": "A-Type Player",
+    "spotifyUrl": "https://open.spotify.com/search/Kom%20Tilbage%20Nu%20%28Karaoke%20Version%29%20-%20Originally%20Performed%20By%20Shu%20Bi%20Dua%20A-Type%20Player"
+  },
+  {
+    "year": 2013,
+    "title": "Midsommersangen (Karaoke Version with Background Vocals) - Originally Performed By Shu Bi Dua",
+    "artist": "A-Type Player",
+    "spotifyUrl": "https://open.spotify.com/search/Midsommersangen%20%28Karaoke%20Version%20with%20Background%20Vocals%29%20-%20Originally%20Performed%20By%20Shu%20Bi%20Dua%20A-Type%20Player"
+  },
+  {
+    "year": 2013,
+    "title": "Nam Nam (Karaoke Version) - Originally Performed By Shu Bi Dua",
+    "artist": "A-Type Player",
+    "spotifyUrl": "https://open.spotify.com/search/Nam%20Nam%20%28Karaoke%20Version%29%20-%20Originally%20Performed%20By%20Shu%20Bi%20Dua%20A-Type%20Player"
+  },
+  {
+    "year": 2013,
+    "title": "Sexchikane (Karaoke Version with Background Vocals) - Originally Performed By Shu Bi Dua",
+    "artist": "A-Type Player",
+    "spotifyUrl": "https://open.spotify.com/search/Sexchikane%20%28Karaoke%20Version%20with%20Background%20Vocals%29%20-%20Originally%20Performed%20By%20Shu%20Bi%20Dua%20A-Type%20Player"
+  },
+  {
+    "year": 2013,
+    "title": "Fed Rock (Karaoke Version) - Originally Performed By Shu Bi Dua",
+    "artist": "A-Type Player",
+    "spotifyUrl": "https://open.spotify.com/search/Fed%20Rock%20%28Karaoke%20Version%29%20-%20Originally%20Performed%20By%20Shu%20Bi%20Dua%20A-Type%20Player"
+  }
+]

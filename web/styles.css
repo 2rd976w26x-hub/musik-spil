@@ -116,6 +116,42 @@ body{
 .btnTertiary{background:transparent;color:var(--muted);border:1px solid var(--border)}
 .btnSmall{padding:8px 10px;font-size:13px}
 
+/* Year input helpers */
+.yearInputRow{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.yearInput{
+  flex:1;
+  text-align:center;
+  font-variant-numeric: tabular-nums;
+}
+.yearStep{
+  padding:10px 10px;
+  min-width:52px;
+}
+.btnGhost{
+  background:transparent;
+  color:var(--text);
+  border:1px solid var(--border);
+}
+.yearChips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px;
+}
+.btnPill{
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.75);
+  color:var(--text);
+  font-size:13px;
+}
+.btnPill:active{transform:translateY(1px)}
+
 .linkBtn{width:100%;margin:6px 0 10px 0}
 
 .sectionTitle{

@@ -94,7 +94,21 @@
             </div>
 
             <div id="guessPanel" class="hidden">
-              <input id="guessYearInput" class="input" placeholder="Dit bud (årstal)">
+              <div class="yearInputRow">
+                <button id="yearMinus10" class="btn btnGhost yearStep" type="button" aria-label="Minus 10 år">−10</button>
+                <button id="yearMinus1" class="btn btnGhost yearStep" type="button" aria-label="Minus 1 år">−1</button>
+                <input id="guessYearInput" class="input yearInput" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="Årstal">
+                <button id="yearPlus1" class="btn btnGhost yearStep" type="button" aria-label="Plus 1 år">+1</button>
+                <button id="yearPlus10" class="btn btnGhost yearStep" type="button" aria-label="Plus 10 år">+10</button>
+              </div>
+              <div class="yearQuickRow">
+                <button class="btn btnPill yearQuick" type="button" data-year="1970">1970</button>
+                <button class="btn btnPill yearQuick" type="button" data-year="1980">1980</button>
+                <button class="btn btnPill yearQuick" type="button" data-year="1990">1990</button>
+                <button class="btn btnPill yearQuick" type="button" data-year="2000">2000</button>
+                <button class="btn btnPill yearQuick" type="button" data-year="2010">2010</button>
+                <button class="btn btnPill yearQuick" type="button" data-year="2020">2020</button>
+              </div>
               <button id="submitGuessBtn" class="btn btnPrimary" type="button">Afgiv gæt</button>
               <div id="guessStatus"></div>
             </div>

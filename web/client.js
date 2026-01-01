@@ -460,6 +460,70 @@ el('submitGuessBtn').onclick = async () => {
   }
 };
 
+// --- Year input UX helpers (numeric keyboard on iPhone + quick adjust buttons) ---
+(() => {
+  const yearInput = el('guessYearInput');
+  const submitBtn = el('submitGuessBtn');
+  const statusEl = el('guessStatus');
+  if(!yearInput || !submitBtn) return;
+
+  const clampYear = (y) => {
+    const now = new Date().getFullYear();
+    const min = 1800;
+    const max = now;
+    if(Number.isNaN(y)) return min;
+    return Math.max(min, Math.min(max, y));
+  };
+
+  const sanitize = () => {
+    const cleaned = (yearInput.value || '').replace(/\D/g, '').slice(0, 4);
+    if(cleaned !== yearInput.value) yearInput.value = cleaned;
+  };
+
+  yearInput.addEventListener('input', () => {
+    sanitize();
+    if(statusEl) statusEl.innerText = '';
+  });
+
+  yearInput.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      submitBtn.click();
+    }
+  });
+
+  const step = (delta) => {
+    sanitize();
+    const now = new Date().getFullYear();
+    const base = yearInput.value ? parseInt(yearInput.value, 10) : now;
+    const next = clampYear(base + delta);
+    yearInput.value = String(next);
+    yearInput.focus();
+    if(statusEl) statusEl.innerText = '';
+  };
+
+  const bindStep = (id, delta) => {
+    const btn = document.getElementById(id);
+    if(!btn) return;
+    btn.addEventListener('click', () => step(delta));
+  };
+
+  bindStep('yearMinus10', -10);
+  bindStep('yearMinus1', -1);
+  bindStep('yearPlus1', 1);
+  bindStep('yearPlus10', 10);
+
+  document.querySelectorAll('.yearChip').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const y = (btn.getAttribute('data-year') || '').trim();
+      yearInput.value = y;
+      sanitize();
+      yearInput.focus();
+      if(statusEl) statusEl.innerText = '';
+    });
+  });
+})();
+
 el('nextRoundBtn').onclick = async () => {
   try{
     await api({action:'next_round', room});

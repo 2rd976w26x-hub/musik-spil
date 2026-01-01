@@ -131,11 +131,15 @@ function show(id){
 
 function render(){
   if(!state){
+    renderLiveScore(null);
     show('view-lobby');
     const lb = document.getElementById('leaveRoomBtn');
     if(lb) lb.classList.add('hidden');
     return;
   }
+
+  // Always keep the live stilling up to date
+  renderLiveScore(state);
 
   if(!state.started){
     stopLocalTimer();
@@ -158,6 +162,40 @@ function render(){
     show('view-end');
     renderEnd();
   }
+}
+
+function renderLiveScore(s){
+  const box = el('liveScore');
+  if(!box) return;
+
+  if(!s || !s.players || s.players.length === 0){
+    box.classList.add('hidden');
+    box.innerHTML = '';
+    return;
+  }
+
+  const scores = s.scores || {};
+  box.innerHTML = (s.players||[]).map(p=>{
+    const sc = (scores && scores[p.id] != null) ? scores[p.id] : 0;
+    return `<span class="pill scorePill">${escapeHtml(p.name)}: <b>${sc}</b></span>`;
+  }).join('');
+
+  // Vis også hvem der er DJ lige nu (hvis spillet er startet)
+  if(typeof s.dj_index === 'number' && s.players[s.dj_index]){
+    const dj = s.players[s.dj_index];
+    box.innerHTML = `<span class="pill pillNeutral">DJ: ${escapeHtml(dj.name)}</span>` + box.innerHTML;
+  }
+
+  box.classList.remove('hidden');
+}
+
+function escapeHtml(str){
+  return String(str||'')
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'",'&#39;');
 }
 
 function renderLobby(){

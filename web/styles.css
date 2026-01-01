@@ -36,6 +36,33 @@ body{
 .brand{font-weight:800;font-size:18px;letter-spacing:.2px}
 .topbarRight{display:flex;align-items:center;gap:10px}
 
+/* Live stilling i topbaren */
+.liveScore{
+  width:100%;
+  margin-top:8px;
+  padding-top:8px;
+  border-top:1px solid var(--border);
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:flex-end;
+}
+.liveScore .scorePill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.85);
+  font-weight:700;
+  font-size:13px;
+}
+.liveScore .scorePill small{
+  font-weight:800;
+  opacity:.75;
+}
+
 .container{
   width:min(920px, 100%);
   margin:16px auto;

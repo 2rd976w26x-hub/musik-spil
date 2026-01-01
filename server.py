@@ -3,9 +3,36 @@ import random, string, time, json
 from copy import deepcopy
 import os
 
+
+def get_songset_for_room(room: dict) -> list:
+    """Return the list of songs for the room's chosen category (fallback to any available)."""
+    cat = room.get("category")
+    if cat and cat in SONGSETS:
+        return SONGSETS[cat]
+    # fallback: first available songset
+    if SONGSETS:
+        first_key = sorted(SONGSETS.keys())[0]
+        room["category"] = first_key
+        return SONGSETS[first_key]
+    return []
+
+def refill_unused_songs(room: dict) -> None:
+    """Refill room['unused_songs'] from its songset when empty."""
+    songs = list(get_songset_for_room(room))
+    room["unused_songs"] = songs[:]  # copy
+
+def pick_next_song(room: dict) -> dict | None:
+    """Pop a random next song from room['unused_songs'] (refill if needed)."""
+    if not room.get("unused_songs"):
+        refill_unused_songs(room)
+    if not room.get("unused_songs"):
+        return None
+    i = random.randrange(len(room["unused_songs"]))
+    return room["unused_songs"].pop(i)
+
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.6-github-ready"
+VERSION = "v1.5.5-fix-spotify-key"
 rooms = {}
 
 def gen_code(n=4):
@@ -19,11 +46,31 @@ def now():
 
 def load_songsets():
     """Load all song json files from web/. Supports songs.json and songs_*.json."""
+    def normalize_song(s):
+        """Normalize song keys so the frontend can rely on snake_case."""
+        if not isinstance(s, dict):
+            return s
+        # Some datasets use camelCase keys.
+        if "spotify_url" not in s and "spotifyUrl" in s:
+            s["spotify_url"] = s.get("spotifyUrl")
+        if "year" not in s and "Year" in s:
+            s["year"] = s.get("Year")
+        if "title" not in s and "Title" in s:
+            s["title"] = s.get("Title")
+        if "artist" not in s and "Artist" in s:
+            s["artist"] = s.get("Artist")
+        return s
+
+    def normalize_list(lst):
+        if isinstance(lst, list):
+            return [normalize_song(x) for x in lst]
+        return lst
+
     songsets = {}
     # Default
     try:
         with open("web/songs.json", encoding="utf-8") as f:
-            songsets["Standard"] = json.load(f)
+            songsets["Standard"] = normalize_list(json.load(f))
     except Exception:
         songsets["Standard"] = []
     # Extra categories
@@ -37,12 +84,31 @@ def load_songsets():
             continue
         try:
             with open(path, encoding="utf-8") as f:
-                songsets[cat] = json.load(f)
+                songsets[cat] = normalize_list(json.load(f))
         except Exception:
             pass
     return songsets
 
 SONGSETS = load_songsets()
+
+# Default category (first available) so we never end up with an empty song list
+DEFAULT_CATEGORY = next(iter(sorted(SONGSETS.keys())), None)
+if DEFAULT_CATEGORY is None:
+    # Fallback so server still boots even if no song files are present
+    DEFAULT_CATEGORY = "Standard"
+
+def normalize_category(cat: str | None) -> str:
+    """Return a valid category key present in SONGSETS, or DEFAULT_CATEGORY."""
+    if not cat:
+        return DEFAULT_CATEGORY
+    if cat in SONGSETS:
+        return cat
+    # Accept case-insensitive match
+    for k in SONGSETS.keys():
+        if k.lower() == str(cat).lower():
+            return k
+    return DEFAULT_CATEGORY
+
 
 def get_songs_for_category(category: str):
     if not category:
@@ -223,7 +289,19 @@ def api():
         room["last_round_points"] = {}
         room["history"] = []
         room["round_started_at"] = None
-        room["current_song"] = room["unused_songs"].pop(random.randrange(len(room["unused_songs"])))
+
+        # Resolve category safely (previous bug: referenced undefined variable `category`)
+        category = room.get("category")
+        # Fallback: pick first available category if invalid/missing
+        if not category or category not in SONGS_BY_CATEGORY:
+            category = next(iter(SONGS_BY_CATEGORY.keys()), None)
+            room["category"] = category
+        # Safety: ensure we actually have songs in this category
+        if not get_songs_for_category(category):
+            return jsonify({"ok": False, "error": "no_songs", "message": f"Ingen sange fundet for kategori '{category}'"}), 400
+        room["current_song"] = pick_next_song(room)
+        if room["current_song"] is None:
+            return jsonify({"ok": False, "error": "no_songs_loaded"})
         return jsonify({"ok": True})
 
     if action == "start_timer":
@@ -291,7 +369,9 @@ def api():
         room["last_round_points"] = {}
         room["round_started_at"] = None
         room["status"] = "round"
-        room["current_song"] = room["unused_songs"].pop(random.randrange(len(room["unused_songs"])))
+        room["current_song"] = pick_next_song(room)
+        if room["current_song"] is None:
+            return jsonify({"ok": False, "error": "no_songs_loaded"})
         return jsonify({"ok": True})
 
     if action == "reset_game":

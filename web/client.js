@@ -1,3 +1,39 @@
+let localTimer = null;
+// Updated on each render so the timer text can show a better message.
+let isDJFlag = false;
+
+function updateTimerText(){
+  const tt = el('timerText');
+  if(!tt || !state) return;
+
+  if(state.status !== 'round'){
+    tt.innerText = '';
+    return;
+  }
+
+  if(state.round_started_at){
+    const left = Math.max(0, Math.ceil(
+      (state.timer_seconds || 0) - (Date.now()/1000 - state.round_started_at)
+    ));
+    tt.innerText = 'Tid tilbage: ' + left + 's';
+  } else {
+    tt.innerText = isDJFlag ? 'Du er DJ — tryk Start når du er klar' : 'Venter på DJ…';
+  }
+}
+
+function startLocalTimer(){
+  stopLocalTimer();
+  updateTimerText();
+  localTimer = setInterval(updateTimerText, 250);
+}
+
+function stopLocalTimer(){
+  if(localTimer){
+    clearInterval(localTimer);
+    localTimer = null;
+  }
+}
+
 let coverTimer = null;
 const covers = [
   'covers/cover1.svg',
@@ -104,6 +140,7 @@ function render(){
   }
 
   if(!state.started){
+    stopLocalTimer();
     show('view-lobby');
     const hp = el('historyPanel');
     if(hp) hp.classList.add('hidden');
@@ -148,9 +185,11 @@ function renderLobby(){
 
 function renderRound(){
   startCoverRotation();
+  startLocalTimer();
 
   const dj = state.players[state.dj_index];
-  const isDJ = player && player.id === dj.id;
+  const isDJ = player && dj && player.id === dj.id;
+  isDJFlag = !!isDJ;
 
   el('roundText').innerText = 'Runde ' + (state.round_index+1);
   el('roleText').innerText = isDJ ? 'Du er DJ' : 'Gæt årstal';
@@ -161,7 +200,8 @@ function renderRound(){
   if(isDJ && state.current_song){
     el('djSongTitle').innerText = state.current_song.title;
     el('djSongMeta').innerText = state.current_song.artist + ' ('+state.current_song.year+')';
-    el('playLink').href = state.current_song.spotifyUrl;
+    // Support both camelCase and snake_case keys.
+    el('playLink').href = state.current_song.spotifyUrl || state.current_song.spotify_url || '#';
   }
 
   // Guess list: show who has guessed (do not reveal year in-round)
@@ -184,18 +224,7 @@ function renderRound(){
     li.innerText = p.name + ': ' + sc + ' point';
     sb.appendChild(li);
   });
-
-  const tt = el('timerText');
-  if(!tt) return;
-
-  if(state.round_started_at){
-    const left = Math.max(0, Math.ceil(
-      state.timer_seconds - (Date.now()/1000 - state.round_started_at)
-    ));
-    tt.innerText = 'Tid tilbage: ' + left + 's';
-  } else {
-    tt.innerText = 'Venter på DJ…';
-  }
+  updateTimerText();
 
   const gs = el('guessStatus');
   if(gs) gs.innerText = '';
@@ -205,6 +234,7 @@ function renderRound(){
 
 function renderResult(){
   stopCoverRotation();
+  stopLocalTimer();
 
   el('resultCorrectYear').innerText = 'Korrekt år: ' + state.current_song.year;
 
@@ -229,6 +259,7 @@ function renderResult(){
 
 function renderEnd(){
   stopCoverRotation();
+  stopLocalTimer();
 
   const scores = (state.players||[])
     .map(p=>({name:p.name,score:(state.scores?.[p.id] ?? 0)}))
@@ -296,6 +327,31 @@ function renderHistory(){
     card.appendChild(meta);
     if(song.spotifyUrl) card.appendChild(link);
     card.appendChild(table);
+
+    // Cumulative standings after this round
+    if(h.scoreboard && h.scoreboard.length){
+      const sTitle = document.createElement('div');
+      sTitle.className = 'historyMeta';
+      sTitle.style.marginTop = '10px';
+      sTitle.innerText = 'Samlet stilling efter runden:';
+
+      const sTable = document.createElement('table');
+      sTable.className = 'historyTable';
+      const sHead = document.createElement('thead');
+      sHead.innerHTML = '<tr><th>Spiller</th><th>Score</th></tr>';
+      sTable.appendChild(sHead);
+      const sBody = document.createElement('tbody');
+      h.scoreboard.forEach(s=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${s.player_name}</td><td>${s.score}</td>`;
+        sBody.appendChild(tr);
+      });
+      sTable.appendChild(sBody);
+
+      card.appendChild(sTitle);
+      card.appendChild(sTable);
+    }
+
     c.appendChild(card);
   });
 }

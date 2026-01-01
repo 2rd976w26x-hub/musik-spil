@@ -182,3 +182,6 @@ li{margin:6px 0}
   box-shadow:0 12px 30px rgba(0,0,0,.25);
   object-fit:cover;
 }
+
+#timerText{font-size:16px; font-weight:900;}
+#timerText{display:inline-flex; padding:10px 14px; border-radius:999px; border:1px solid var(--border); background:#fff; margin:10px 0 12px 0;}

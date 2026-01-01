@@ -1,37 +1,3 @@
-let localTimer = null;
-
-function updateTimerText(){
-  const tt = el('timerText');
-  if(!tt || !state) return;
-
-  if(state.status !== 'round'){
-    tt.innerText = '';
-    return;
-  }
-
-  if(state.round_started_at){
-    const left = Math.max(0, Math.ceil(
-      (state.timer_seconds || 0) - (Date.now()/1000 - state.round_started_at)
-    ));
-    tt.innerText = 'Tid tilbage: ' + left + 's';
-  } else {
-    tt.innerText = 'Venter på DJ…';
-  }
-}
-
-function startLocalTimer(){
-  stopLocalTimer();
-  updateTimerText();
-  localTimer = setInterval(updateTimerText, 250);
-}
-
-function stopLocalTimer(){
-  if(localTimer){
-    clearInterval(localTimer);
-    localTimer = null;
-  }
-}
-
 let coverTimer = null;
 const covers = [
   'covers/cover1.svg',
@@ -138,7 +104,6 @@ function render(){
   }
 
   if(!state.started){
-    stopLocalTimer();
     show('view-lobby');
     const hp = el('historyPanel');
     if(hp) hp.classList.add('hidden');
@@ -183,7 +148,6 @@ function renderLobby(){
 
 function renderRound(){
   startCoverRotation();
-  startLocalTimer();
 
   const dj = state.players[state.dj_index];
   const isDJ = player && player.id === dj.id;
@@ -220,7 +184,18 @@ function renderRound(){
     li.innerText = p.name + ': ' + sc + ' point';
     sb.appendChild(li);
   });
-  updateTimerText();
+
+  const tt = el('timerText');
+  if(!tt) return;
+
+  if(state.round_started_at){
+    const left = Math.max(0, Math.ceil(
+      state.timer_seconds - (Date.now()/1000 - state.round_started_at)
+    ));
+    tt.innerText = 'Tid tilbage: ' + left + 's';
+  } else {
+    tt.innerText = 'Venter på DJ…';
+  }
 
   const gs = el('guessStatus');
   if(gs) gs.innerText = '';
@@ -230,7 +205,6 @@ function renderRound(){
 
 function renderResult(){
   stopCoverRotation();
-  stopLocalTimer();
 
   el('resultCorrectYear').innerText = 'Korrekt år: ' + state.current_song.year;
 
@@ -255,7 +229,6 @@ function renderResult(){
 
 function renderEnd(){
   stopCoverRotation();
-  stopLocalTimer();
 
   const scores = (state.players||[])
     .map(p=>({name:p.name,score:(state.scores?.[p.id] ?? 0)}))
@@ -323,31 +296,6 @@ function renderHistory(){
     card.appendChild(meta);
     if(song.spotifyUrl) card.appendChild(link);
     card.appendChild(table);
-
-    // Cumulative standings after this round
-    if(h.scoreboard && h.scoreboard.length){
-      const sTitle = document.createElement('div');
-      sTitle.className = 'historyMeta';
-      sTitle.style.marginTop = '10px';
-      sTitle.innerText = 'Samlet stilling efter runden:';
-
-      const sTable = document.createElement('table');
-      sTable.className = 'historyTable';
-      const sHead = document.createElement('thead');
-      sHead.innerHTML = '<tr><th>Spiller</th><th>Score</th></tr>';
-      sTable.appendChild(sHead);
-      const sBody = document.createElement('tbody');
-      h.scoreboard.forEach(s=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${s.player_name}</td><td>${s.score}</td>`;
-        sBody.appendChild(tr);
-      });
-      sTable.appendChild(sBody);
-
-      card.appendChild(sTitle);
-      card.appendChild(sTable);
-    }
-
     c.appendChild(card);
   });
 }

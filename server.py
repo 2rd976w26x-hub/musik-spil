@@ -269,6 +269,13 @@ def api():
         room["last_round_points"] = {}
         room["history"] = []
         room["round_started_at"] = None
+
+        # Resolve category safely (previous bug: referenced undefined variable `category`)
+        category = room.get("category")
+        # Fallback: pick first available category if invalid/missing
+        if not category or category not in SONGS_BY_CATEGORY:
+            category = next(iter(SONGS_BY_CATEGORY.keys()), None)
+            room["category"] = category
         # Safety: ensure we actually have songs in this category
         if not get_songs_for_category(category):
             return jsonify({"ok": False, "error": "no_songs", "message": f"Ingen sange fundet for kategori '{category}'"}), 400

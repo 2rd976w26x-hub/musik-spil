@@ -513,7 +513,8 @@ el('submitGuessBtn').onclick = async () => {
   bindStep('yearPlus1', 1);
   bindStep('yearPlus10', 10);
 
-  document.querySelectorAll('.yearChip').forEach((btn) => {
+  // Quick decade buttons (HTML uses .yearQuick; older builds used .yearChip)
+  document.querySelectorAll('.yearChip, .yearQuick').forEach((btn) => {
     btn.addEventListener('click', () => {
       const y = (btn.getAttribute('data-year') || '').trim();
       yearInput.value = y;

@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.8-github-ready"
+VERSION = "v1.4.7-github-ready"
 rooms = {}
 
 def gen_code(n=4):
@@ -102,26 +102,14 @@ def record_round_history(room):
     # Sort by name for readability
     guesses_named.sort(key=lambda x: (x.get("player_name") or ""))
 
-    # Snapshot of cumulative scores after this round
-scoreboard = []
-for p in room.get("players", []):
-    pid = p.get("id")
-    scoreboard.append({
-        "player_id": pid,
-        "player_name": p.get("name") or pid,
-        "score": int((room.get("scores") or {}).get(pid, 0))
-    })
-scoreboard.sort(key=lambda x: (-x["score"], x.get("player_name","")))
-
-entry = {
-    "round_number": int(room.get("round_index", 0)) + 1,
-    "ended_at": int(now()),
-    "dj_id": did,
-    "dj_name": dj_name(room),
-    "song": song,
-    "guesses": guesses_named,
-    "scoreboard": scoreboard
-}
+    entry = {
+        "round_number": int(room.get("round_index", 0)) + 1,
+        "ended_at": int(now()),
+        "dj_id": did,
+        "dj_name": dj_name(room),
+        "song": song,
+        "guesses": guesses_named
+    }
     room.setdefault("history", []).append(entry)
 
 def end_round(room):

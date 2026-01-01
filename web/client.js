@@ -323,31 +323,6 @@ function renderHistory(){
     card.appendChild(meta);
     if(song.spotifyUrl) card.appendChild(link);
     card.appendChild(table);
-
-    // Cumulative standings after this round
-    if(h.scoreboard && h.scoreboard.length){
-      const sTitle = document.createElement('div');
-      sTitle.className = 'historyMeta';
-      sTitle.style.marginTop = '10px';
-      sTitle.innerText = 'Samlet stilling efter runden:';
-
-      const sTable = document.createElement('table');
-      sTable.className = 'historyTable';
-      const sHead = document.createElement('thead');
-      sHead.innerHTML = '<tr><th>Spiller</th><th>Score</th></tr>';
-      sTable.appendChild(sHead);
-      const sBody = document.createElement('tbody');
-      h.scoreboard.forEach(s=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${s.player_name}</td><td>${s.score}</td>`;
-        sBody.appendChild(tr);
-      });
-      sTable.appendChild(sBody);
-
-      card.appendChild(sTitle);
-      card.appendChild(sTable);
-    }
-
     c.appendChild(card);
   });
 }

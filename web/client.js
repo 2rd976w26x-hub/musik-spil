@@ -1,6 +1,4 @@
 let localTimer = null;
-// Updated on each render so the timer text can show a better message.
-let isDJFlag = false;
 
 function updateTimerText(){
   const tt = el('timerText');
@@ -17,7 +15,7 @@ function updateTimerText(){
     ));
     tt.innerText = 'Tid tilbage: ' + left + 's';
   } else {
-    tt.innerText = isDJFlag ? 'Du er DJ — tryk Start når du er klar' : 'Venter på DJ…';
+    tt.innerText = 'Venter på DJ…';
   }
 }
 
@@ -188,8 +186,7 @@ function renderRound(){
   startLocalTimer();
 
   const dj = state.players[state.dj_index];
-  const isDJ = player && dj && player.id === dj.id;
-  isDJFlag = !!isDJ;
+  const isDJ = player && player.id === dj.id;
 
   el('roundText').innerText = 'Runde ' + (state.round_index+1);
   el('roleText').innerText = isDJ ? 'Du er DJ' : 'Gæt årstal';
@@ -200,8 +197,7 @@ function renderRound(){
   if(isDJ && state.current_song){
     el('djSongTitle').innerText = state.current_song.title;
     el('djSongMeta').innerText = state.current_song.artist + ' ('+state.current_song.year+')';
-    // Support both camelCase and snake_case keys.
-    el('playLink').href = state.current_song.spotifyUrl || state.current_song.spotify_url || '#';
+    el('playLink').href = state.current_song.spotifyUrl;
   }
 
   // Guess list: show who has guessed (do not reveal year in-round)

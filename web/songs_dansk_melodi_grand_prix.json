@@ -1,682 +1,452 @@
-{
-  "name": "Dansk Melodi Grand Prix",
-  "file": "songs_dansk_melodi_grand_prix.json",
-  "created": "2026-01-01",
-  "songs": [
-    {
-      "id": 1,
-      "title": "A La Carte",
-      "artist": "Snapshot",
-      "year": 2009,
-      "spotifyTrackId": "5JsmkOTfebj7gt4vhMUpse",
-      "spotifyUrl": "https://open.spotify.com/track/5JsmkOTfebj7gt4vhMUpse",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/5JsmkOTfebj7gt4vhMUpse"
-    },
-    {
-      "id": 2,
-      "title": "All Night Long",
-      "artist": "Simon Mathew",
-      "year": 2004,
-      "spotifyTrackId": "6BnZRwoeNRD345NaZjrg0X",
-      "spotifyUrl": "https://open.spotify.com/track/6BnZRwoeNRD345NaZjrg0X",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/6BnZRwoeNRD345NaZjrg0X"
-    },
-    {
-      "id": 3,
-      "title": "Alt Det Som Ingen Ser",
-      "artist": "KENNY & LOTTE",
-      "year": 1992,
-      "spotifyTrackId": "0ZPNVpZRRGmPzbE8k1qjaP",
-      "spotifyUrl": "https://open.spotify.com/track/0ZPNVpZRRGmPzbE8k1qjaP",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/0ZPNVpZRRGmPzbE8k1qjaP"
-    },
-    {
-      "id": 4,
-      "title": "Angelique",
-      "artist": "Dario Campeotto",
-      "year": 2002,
-      "spotifyTrackId": "7ETXytirTgnMJzyxl4e7UI",
-      "spotifyUrl": "https://open.spotify.com/track/7ETXytirTgnMJzyxl4e7UI",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/7ETXytirTgnMJzyxl4e7UI"
-    },
-    {
-      "id": 5,
-      "title": "AUSTRALIAN SPRING",
-      "artist": "Basix",
-      "year": 2001,
-      "spotifyTrackId": "2USKZsTnquFus53av6urJU",
-      "spotifyUrl": "https://open.spotify.com/track/2USKZsTnquFus53av6urJU",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/2USKZsTnquFus53av6urJU"
-    },
-    {
-      "id": 6,
-      "title": "Believe Again",
-      "artist": "Brinck",
-      "year": 2009,
-      "spotifyTrackId": "6oc2gqNSkOJF7vX3hgEgsZ",
-      "spotifyUrl": "https://open.spotify.com/track/6oc2gqNSkOJF7vX3hgEgsZ",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/6oc2gqNSkOJF7vX3hgEgsZ"
-    },
-    {
-      "id": 7,
-      "title": "Boom Boom",
-      "artist": "Mabel",
-      "year": 2009,
-      "spotifyTrackId": "5AlWrUcJpzbp7cw35uMz9u",
-      "spotifyUrl": "https://open.spotify.com/track/5AlWrUcJpzbp7cw35uMz9u",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/5AlWrUcJpzbp7cw35uMz9u"
-    },
-    {
-      "id": 8,
-      "title": "Breathing",
-      "artist": "Bryan Rice",
-      "year": 2010,
-      "spotifyTrackId": "2sycV2zGdIPt9O6unopRt1",
-      "spotifyUrl": "https://open.spotify.com/track/2sycV2zGdIPt9O6unopRt1",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/2sycV2zGdIPt9O6unopRt1"
-    },
-    {
-      "id": 9,
-      "title": "Cliche Love Song",
-      "artist": "Basim",
-      "year": 2014,
-      "spotifyTrackId": "4mZTLP76T9sqqWhONwUHHU",
-      "spotifyUrl": "https://open.spotify.com/track/4mZTLP76T9sqqWhONwUHHU",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/4mZTLP76T9sqqWhONwUHHU"
-    },
-    {
-      "id": 10,
-      "title": "Dansevise",
-      "artist": "Grethe Ingmann,Jørgen Ingmann",
-      "year": 2017,
-      "spotifyTrackId": "5TMUkxBkiytwcPqkECo7kz",
-      "spotifyUrl": "https://open.spotify.com/track/5TMUkxBkiytwcPqkECo7kz",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/5TMUkxBkiytwcPqkECo7kz"
-    },
-    {
-      "id": 11,
-      "title": "Det Det",
-      "artist": "Sukkerchok",
-      "year": 2009,
-      "spotifyTrackId": "6dIeW04HC7f3rmepodMEx8",
-      "spotifyUrl": "https://open.spotify.com/track/6dIeW04HC7f3rmepodMEx8",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/6dIeW04HC7f3rmepodMEx8"
-    },
-    {
-      "id": 12,
-      "title": "Det' det jeg altid har sagt (Heldig fyr) - 2010 - Remaster",
-      "artist": "Tommy Seebach",
-      "year": 1986,
-      "spotifyTrackId": "1GiSW50Urzpyj4ZysXJdCT",
-      "spotifyUrl": "https://open.spotify.com/track/1GiSW50Urzpyj4ZysXJdCT",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/1GiSW50Urzpyj4ZysXJdCT"
-    },
-    {
-      "id": 13,
-      "title": "Det' en hemlighed",
-      "artist": "Lecia",
-      "year": 2011,
-      "spotifyTrackId": "6D0JyvUKWzqo64mHkRWplL",
-      "spotifyUrl": "https://open.spotify.com/track/6D0JyvUKWzqo64mHkRWplL",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/6D0JyvUKWzqo64mHkRWplL"
-    },
-    {
-      "id": 14,
-      "title": "Det' gratis - 1998 Digital Remaster",
-      "artist": "Tommy Seebach",
-      "year": 1998,
-      "spotifyTrackId": "0bXF8zb3z4th5QIbJO4jxB",
-      "spotifyUrl": "https://open.spotify.com/track/0bXF8zb3z4th5QIbJO4jxB",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/0bXF8zb3z4th5QIbJO4jxB"
-    },
-    {
-      "id": 15,
-      "title": "Det' lige det",
-      "artist": "Kirsten Og Søren",
-      "year": 1996,
-      "spotifyTrackId": "0UnZnsItiP5ZRnSPl2klcw",
-      "spotifyUrl": "https://open.spotify.com/track/0UnZnsItiP5ZRnSPl2klcw",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/0UnZnsItiP5ZRnSPl2klcw"
-    },
-    {
-      "id": 16,
-      "title": "Der står et billede af dig på mit bord",
-      "artist": "Rollo & King",
-      "year": 2001,
-      "spotifyTrackId": "0dIaYiwgjDbEagTfViXBhO",
-      "spotifyUrl": "https://open.spotify.com/track/0dIaYiwgjDbEagTfViXBhO",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/0dIaYiwgjDbEagTfViXBhO"
-    },
-    {
-      "id": 17,
-      "title": "Disco Tango",
-      "artist": "Tommy Seebach",
-      "year": 2011,
-      "spotifyTrackId": "5JpYM0yLDfKfoPWqydsqgj",
-      "spotifyUrl": "https://open.spotify.com/track/5JpYM0yLDfKfoPWqydsqgj",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/5JpYM0yLDfKfoPWqydsqgj"
-    },
-    {
-      "id": 18,
-      "title": "Donna Donna",
-      "artist": "John Hatting",
-      "year": 2011,
-      "spotifyTrackId": "4Js7glENu7IMwS5ugnr5st",
-      "spotifyUrl": "https://open.spotify.com/track/4Js7glENu7IMwS5ugnr5st",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/4Js7glENu7IMwS5ugnr5st"
-    },
-    {
-      "id": 19,
-      "title": "Drama Queen",
-      "artist": "DQ",
-      "year": 2007,
-      "spotifyTrackId": "3KSTHtEyClTH0IWUS3A59P",
-      "spotifyUrl": "https://open.spotify.com/track/3KSTHtEyClTH0IWUS3A59P",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/3KSTHtEyClTH0IWUS3A59P"
-    },
-    {
-      "id": 20,
-      "title": "Du Er Fuld Af Løgn",
-      "artist": "Trax",
-      "year": 1998,
-      "spotifyTrackId": "4NmUPWsdBkNCKRf82VvLfi",
-      "spotifyUrl": "https://open.spotify.com/track/4NmUPWsdBkNCKRf82VvLfi",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/4NmUPWsdBkNCKRf82VvLfi"
-    },
-    {
-      "id": 21,
-      "title": "En Lille Melodi - 2010 version - Bonus Track",
-      "artist": "Anne Herdorf",
-      "year": 2010,
-      "spotifyTrackId": "3WKZGk1yLusKZz5ZBPyHLl",
-      "spotifyUrl": "https://open.spotify.com/track/3WKZGk1yLusKZz5ZBPyHLl",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/3WKZGk1yLusKZz5ZBPyHLl"
-    },
-    {
-      "id": 22,
-      "title": "Fly on the Wings of Love",
-      "artist": "Brødrene Olsen",
-      "year": 2000,
-      "spotifyTrackId": "4v2RaPHSsTvNkggw3RqyeT",
-      "spotifyUrl": "https://open.spotify.com/track/4v2RaPHSsTvNkggw3RqyeT",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/4v2RaPHSsTvNkggw3RqyeT"
-    },
-    {
-      "id": 23,
-      "title": "Fugle",
-      "artist": "Jorgen Olsen",
-      "year": 1990,
-      "spotifyTrackId": "32RN04x7VGDUOONJlsk274",
-      "spotifyUrl": "https://open.spotify.com/track/32RN04x7VGDUOONJlsk274",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/32RN04x7VGDUOONJlsk274"
-    },
-    {
-      "id": 24,
-      "title": "Gi'r du et knus",
-      "artist": "Snapshot",
-      "year": 1998,
-      "spotifyTrackId": "73EXBVrVPlxZ2tXNyTApP6",
-      "spotifyUrl": "https://open.spotify.com/track/73EXBVrVPlxZ2tXNyTApP6",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/73EXBVrVPlxZ2tXNyTApP6"
-    },
-    {
-      "id": 25,
-      "title": "Heart Shaped Hole",
-      "artist": "Simone",
-      "year": 2016,
-      "spotifyTrackId": "6WhL0rJokfGKBXNEl1gcDp",
-      "spotifyUrl": "https://open.spotify.com/track/6WhL0rJokfGKBXNEl1gcDp",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/6WhL0rJokfGKBXNEl1gcDp"
-    },
-    {
-      "id": 26,
-      "title": "Higher Ground",
-      "artist": "Rasmussen",
-      "year": 2018,
-      "spotifyTrackId": "3O16L4wZlh8yoQxVAqO0HF",
-      "spotifyUrl": "https://open.spotify.com/track/3O16L4wZlh8yoQxVAqO0HF",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/3O16L4wZlh8yoQxVAqO0HF"
-    },
-    {
-      "id": 27,
-      "title": "Hip Hurra - Det' Min Fødselsdag",
-      "artist": "Tommy Seebach",
-      "year": 1998,
-      "spotifyTrackId": "5bxUdR1rCwCDAsR5ubSFKr",
-      "spotifyUrl": "https://open.spotify.com/track/5bxUdR1rCwCDAsR5ubSFKr",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/5bxUdR1rCwCDAsR5ubSFKr"
-    },
-    {
-      "id": 28,
-      "title": "Hvad Er Du Ude På?",
-      "artist": "Birthe Kjær",
-      "year": 1998,
-      "spotifyTrackId": "7wwcgQI0BXUTFW7vMGoyW8",
-      "spotifyUrl": "https://open.spotify.com/track/7wwcgQI0BXUTFW7vMGoyW8",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/7wwcgQI0BXUTFW7vMGoyW8"
-    },
-    {
-      "id": 29,
-      "title": "Hvis nu lykken findes",
-      "artist": "Lecia",
-      "year": 2011,
-      "spotifyTrackId": "1vHm339759qYbEh2lhSddt",
-      "spotifyUrl": "https://open.spotify.com/track/1vHm339759qYbEh2lhSddt",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/1vHm339759qYbEh2lhSddt"
-    },
-    {
-      "id": 30,
-      "title": "I Must Be Crazy",
-      "artist": "Sweethearts",
-      "year": 2012,
-      "spotifyTrackId": "7kiDcHbq83dncYupy8nx7K",
-      "spotifyUrl": "https://open.spotify.com/track/7kiDcHbq83dncYupy8nx7K",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/7kiDcHbq83dncYupy8nx7K"
-    },
-    {
-      "id": 31,
-      "title": "In A Moment Like This",
-      "artist": "Chanée & n'evergreen",
-      "year": 2010,
-      "spotifyTrackId": "2wgVbKrFf3kf81FFuv53WP",
-      "spotifyUrl": "https://open.spotify.com/track/2wgVbKrFf3kf81FFuv53WP",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/2wgVbKrFf3kf81FFuv53WP"
-    },
-    {
-      "id": 32,
-      "title": "Ka' du se hva' jeg sa'e",
-      "artist": "Kirsten Og Søren",
-      "year": 1998,
-      "spotifyTrackId": "2FfwfjplmdZZCAtABqwV6C",
-      "spotifyUrl": "https://open.spotify.com/track/2FfwfjplmdZZCAtABqwV6C",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/2FfwfjplmdZZCAtABqwV6C"
-    },
-    {
-      "id": 33,
-      "title": "Kloden Drejer",
-      "artist": "Gry Johansen",
-      "year": 2010,
-      "spotifyTrackId": "2zk5P8iWk5diYeq9QhSLcs",
-      "spotifyUrl": "https://open.spotify.com/track/2zk5P8iWk5diYeq9QhSLcs",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/2zk5P8iWk5diYeq9QhSLcs"
-    },
-    {
-      "id": 34,
-      "title": "Krøller eller ej (feat. Debbie Cameron)",
-      "artist": "Tommy Seebach,Debbie Cameron",
-      "year": 1998,
-      "spotifyTrackId": "1U2rUbWpZUo1hLWZJdkafq",
-      "spotifyUrl": "https://open.spotify.com/track/1U2rUbWpZUo1hLWZJdkafq",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/1U2rUbWpZUo1hLWZJdkafq"
-    },
-    {
-      "id": 35,
-      "title": "Kæmper For Kærlighed",
-      "artist": "Sukkerchok",
-      "year": 2010,
-      "spotifyTrackId": "7rbw7qtxwkhKRW5YrdKYcw",
-      "spotifyUrl": "https://open.spotify.com/track/7rbw7qtxwkhKRW5YrdKYcw",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/7rbw7qtxwkhKRW5YrdKYcw"
-    },
-    {
-      "id": 36,
-      "title": "La' Mig Være",
-      "artist": "The Dreams",
-      "year": 2010,
-      "spotifyTrackId": "4lBj8vojdHWYa2o7ZFibCS",
-      "spotifyUrl": "https://open.spotify.com/track/4lBj8vojdHWYa2o7ZFibCS",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/4lBj8vojdHWYa2o7ZFibCS"
-    },
-    {
-      "id": 37,
-      "title": "Lige der hvor hjertet slår",
-      "artist": "Anders Frandsen",
-      "year": 1992,
-      "spotifyTrackId": "03fKnIb01IC1rrU0PnPbDL",
-      "spotifyUrl": "https://open.spotify.com/track/03fKnIb01IC1rrU0PnPbDL",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/03fKnIb01IC1rrU0PnPbDL"
-    },
-    {
-      "id": 38,
-      "title": "Love Is Forever",
-      "artist": "Leonora",
-      "year": 2019,
-      "spotifyTrackId": "6uOdq6ZtiF55VDSjYfMJvv",
-      "spotifyUrl": "https://open.spotify.com/track/6uOdq6ZtiF55VDSjYfMJvv",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/6uOdq6ZtiF55VDSjYfMJvv"
-    },
-    {
-      "id": 39,
-      "title": "New Tomorrow",
-      "artist": "A Friend In London",
-      "year": 2013,
-      "spotifyTrackId": "7i0oF2AUXzpoLeMQEFkdcd",
-      "spotifyUrl": "https://open.spotify.com/track/7i0oF2AUXzpoLeMQEFkdcd",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/7i0oF2AUXzpoLeMQEFkdcd"
-    },
-    {
-      "id": 40,
-      "title": "Only Teardrops",
-      "artist": "Emmelie de Forest",
-      "year": 2013,
-      "spotifyTrackId": "269y1Vw3O0C9uI3drXpfo9",
-      "spotifyUrl": "https://open.spotify.com/track/269y1Vw3O0C9uI3drXpfo9",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/269y1Vw3O0C9uI3drXpfo9"
-    },
-    {
-      "id": 41,
-      "title": "Prinsesse",
-      "artist": "Zididada",
-      "year": 2004,
-      "spotifyTrackId": "425ruKjPNSQFEU444jvNTc",
-      "spotifyUrl": "https://open.spotify.com/track/425ruKjPNSQFEU444jvNTc",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/425ruKjPNSQFEU444jvNTc"
-    },
-    {
-      "id": 42,
-      "title": "Pyjamas for to - 1998 - Remaster",
-      "artist": "Tommy Seebach",
-      "year": 1998,
-      "spotifyTrackId": "5mggrVcMlJL8qr92tmq4Xs",
-      "spotifyUrl": "https://open.spotify.com/track/5mggrVcMlJL8qr92tmq4Xs",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/5mggrVcMlJL8qr92tmq4Xs"
-    },
-    {
-      "id": 43,
-      "title": "San Francisco",
-      "artist": "Brdr Olsen",
-      "year": 1978,
-      "spotifyTrackId": "24gxFL5XwMqystBJTgwErD",
-      "spotifyUrl": "https://open.spotify.com/track/24gxFL5XwMqystBJTgwErD",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/24gxFL5XwMqystBJTgwErD"
-    },
-    {
-      "id": 44,
-      "title": "Should´ve Known Better",
-      "artist": "Soluna Samay",
-      "year": 2012,
-      "spotifyTrackId": "1NMv17Kzf1yNTGXN08zErP",
-      "spotifyUrl": "https://open.spotify.com/track/1NMv17Kzf1yNTGXN08zErP",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/1NMv17Kzf1yNTGXN08zErP"
-    },
-    {
-      "id": 45,
-      "title": "Sig det som det er",
-      "artist": "Kirsten Og Søren",
-      "year": 1996,
-      "spotifyTrackId": "2IwLG5kFDYYMUn3mZaF2Ym",
-      "spotifyUrl": "https://open.spotify.com/track/2IwLG5kFDYYMUn3mZaF2Ym",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/2IwLG5kFDYYMUn3mZaF2Ym"
-    },
-    {
-      "id": 46,
-      "title": "Sig Det' Løgn",
-      "artist": "Tomas Thordarson",
-      "year": 2004,
-      "spotifyTrackId": "1mF1plcm8jc5sHwxaZAu4f",
-      "spotifyUrl": "https://open.spotify.com/track/1mF1plcm8jc5sHwxaZAu4f",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/1mF1plcm8jc5sHwxaZAu4f"
-    },
-    {
-      "id": 47,
-      "title": "Sindssyg",
-      "artist": "Johnny Deluxe",
-      "year": 2010,
-      "spotifyTrackId": "04aK2rroDQR0oED3hLEtR8",
-      "spotifyUrl": "https://open.spotify.com/track/04aK2rroDQR0oED3hLEtR8",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/04aK2rroDQR0oED3hLEtR8"
-    },
-    {
-      "id": 48,
-      "title": "Skibet Skal Sejle I Nat",
-      "artist": "Gustav Winckler,Birthe Wilke",
-      "year": 2000,
-      "spotifyTrackId": "1dNQoP2BNPICBAL4ad163S",
-      "spotifyUrl": "https://open.spotify.com/track/1dNQoP2BNPICBAL4ad163S",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/1dNQoP2BNPICBAL4ad163S"
-    },
-    {
-      "id": 49,
-      "title": "Sku' du spørg' fra no'en",
-      "artist": "Kirsten Og Søren",
-      "year": 1985,
-      "spotifyTrackId": "7hatNMrDdTFpEa9zQp4kAm",
-      "spotifyUrl": "https://open.spotify.com/track/7hatNMrDdTFpEa9zQp4kAm",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/7hatNMrDdTFpEa9zQp4kAm"
-    },
-    {
-      "id": 50,
-      "title": "Sleepless",
-      "artist": "Anne Noa",
-      "year": 2011,
-      "spotifyTrackId": "0pnVAS7r62yvG5o1fMqJFX",
-      "spotifyUrl": "https://open.spotify.com/track/0pnVAS7r62yvG5o1fMqJFX",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/0pnVAS7r62yvG5o1fMqJFX"
-    },
-    {
-      "id": 51,
-      "title": "Smuk som et stjerneskud",
-      "artist": "Brødrene Olsen",
-      "year": 2000,
-      "spotifyTrackId": "33frkbGSt6bbfj2Nqo9i1p",
-      "spotifyUrl": "https://open.spotify.com/track/33frkbGSt6bbfj2Nqo9i1p",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/33frkbGSt6bbfj2Nqo9i1p"
-    },
-    {
-      "id": 52,
-      "title": "Soldiers Of Love",
-      "artist": "Lighthouse X",
-      "year": 2016,
-      "spotifyTrackId": "6GqgqnOOzjUJrmdOoa7UwF",
-      "spotifyUrl": "https://open.spotify.com/track/6GqgqnOOzjUJrmdOoa7UwF",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/6GqgqnOOzjUJrmdOoa7UwF"
-    },
-    {
-      "id": 53,
-      "title": "Solens Sang",
-      "artist": "NEIGHBOURS",
-      "year": 2012,
-      "spotifyTrackId": "7qamE4vGVjLZB11wlo274Q",
-      "spotifyUrl": "https://open.spotify.com/track/7qamE4vGVjLZB11wlo274Q",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/7qamE4vGVjLZB11wlo274Q"
-    },
-    {
-      "id": 54,
-      "title": "Spanish Soul",
-      "artist": "Sandee May",
-      "year": 2012,
-      "spotifyTrackId": "3dHnUyhKN7ol0PpUYX3dcg",
-      "spotifyUrl": "https://open.spotify.com/track/3dHnUyhKN7ol0PpUYX3dcg",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/3dHnUyhKN7ol0PpUYX3dcg"
-    },
-    {
-      "id": 55,
-      "title": "Starlight",
-      "artist": "Anna Ritsmar",
-      "year": 2018,
-      "spotifyTrackId": "0EBzCZAcd5wU94sx3wEj2Y",
-      "spotifyUrl": "https://open.spotify.com/track/0EBzCZAcd5wU94sx3wEj2Y",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/0EBzCZAcd5wU94sx3wEj2Y"
-    },
-    {
-      "id": 56,
-      "title": "Stemmen i mit liv",
-      "artist": "Kolig Kaj",
-      "year": 2011,
-      "spotifyTrackId": "324qUNJiRbaVHSOsPIrkGW",
-      "spotifyUrl": "https://open.spotify.com/track/324qUNJiRbaVHSOsPIrkGW",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/324qUNJiRbaVHSOsPIrkGW"
-    },
-    {
-      "id": 57,
-      "title": "Take Our Hearts - Original",
-      "artist": "Jesper Nohrstedt",
-      "year": 2012,
-      "spotifyTrackId": "7m3mOVu44nHzpY5RYQoqFy",
-      "spotifyUrl": "https://open.spotify.com/track/7m3mOVu44nHzpY5RYQoqFy",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/7m3mOVu44nHzpY5RYQoqFy"
-    },
-    {
-      "id": 58,
-      "title": "To lys på et bord - 1996 Digital Remaster",
-      "artist": "Otto Brandenburg",
-      "year": 1996,
-      "spotifyTrackId": "6eUoypYbaQq53S5ljtIo2d",
-      "spotifyUrl": "https://open.spotify.com/track/6eUoypYbaQq53S5ljtIo2d",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/6eUoypYbaQq53S5ljtIo2d"
-    },
-    {
-      "id": 59,
-      "title": "Tree Of Life",
-      "artist": "UNITE",
-      "year": 2003,
-      "spotifyTrackId": "2Cr8qPdhgZUGbCk23xCvKG",
-      "spotifyUrl": "https://open.spotify.com/track/2Cr8qPdhgZUGbCk23xCvKG",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/2Cr8qPdhgZUGbCk23xCvKG"
-    },
-    {
-      "id": 60,
-      "title": "Twist Of Love",
-      "artist": "Sidsel Ben Semmane",
-      "year": 2006,
-      "spotifyTrackId": "1FKf1gHK3gj9BIWdhnLX04",
-      "spotifyUrl": "https://open.spotify.com/track/1FKf1gHK3gj9BIWdhnLX04",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/1FKf1gHK3gj9BIWdhnLX04"
-    },
-    {
-      "id": 61,
-      "title": "Two Are Stronger Than One",
-      "artist": "Me & My",
-      "year": 2007,
-      "spotifyTrackId": "6upli4DaQM4B8F4nyW52vR",
-      "spotifyUrl": "https://open.spotify.com/track/6upli4DaQM4B8F4nyW52vR",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/6upli4DaQM4B8F4nyW52vR"
-    },
-    {
-      "id": 62,
-      "title": "Tænder På Dig",
-      "artist": "Jakob Sveistrup",
-      "year": 2005,
-      "spotifyTrackId": "4zxDqiBkTsikSLVi07ePRW",
-      "spotifyUrl": "https://open.spotify.com/track/4zxDqiBkTsikSLVi07ePRW",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/4zxDqiBkTsikSLVi07ePRW"
-    },
-    {
-      "id": 63,
-      "title": "Tænker Altid På Dig",
-      "artist": "Bamses Venner",
-      "year": 1980,
-      "spotifyTrackId": "0zoI2jMtW25nXboVJyZ5Oj",
-      "spotifyUrl": "https://open.spotify.com/track/0zoI2jMtW25nXboVJyZ5Oj",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/0zoI2jMtW25nXboVJyZ5Oj"
-    },
-    {
-      "id": 64,
-      "title": "Ud I Det Blå - Remastret",
-      "artist": "Kim Larsen",
-      "year": 1979,
-      "spotifyTrackId": "0MuJkNwVjWYOqh1pPyWvFQ",
-      "spotifyUrl": "https://open.spotify.com/track/0MuJkNwVjWYOqh1pPyWvFQ",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/0MuJkNwVjWYOqh1pPyWvFQ"
-    },
-    {
-      "id": 65,
-      "title": "Under Stjernerne På Himlen",
-      "artist": "Tommy Seebach",
-      "year": 2014,
-      "spotifyTrackId": "0ZcKEZQMJECZZZkqLYl3CR",
-      "spotifyUrl": "https://open.spotify.com/track/0ZcKEZQMJECZZZkqLYl3CR",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/0ZcKEZQMJECZZZkqLYl3CR"
-    },
-    {
-      "id": 66,
-      "title": "Universe - Original Dansk Melodi Grand Prix 2012 Version",
-      "artist": "Karen Viuff",
-      "year": 2012,
-      "spotifyTrackId": "6J5gJbk7UnCPeya2AzblFC",
-      "spotifyUrl": "https://open.spotify.com/track/6J5gJbk7UnCPeya2AzblFC",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/6J5gJbk7UnCPeya2AzblFC"
-    },
-    {
-      "id": 67,
-      "title": "Venter (Christian Brøns & Patrik Isaksson)",
-      "artist": "Christian Brøns,Patrik Isaksson",
-      "year": 2012,
-      "spotifyTrackId": "5ng9zvuyCadOcnFD5ZxzFx",
-      "spotifyUrl": "https://open.spotify.com/track/5ng9zvuyCadOcnFD5ZxzFx",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/5ng9zvuyCadOcnFD5ZxzFx"
-    },
-    {
-      "id": 68,
-      "title": "Vi Danser Rock Og Rul",
-      "artist": "Stig Rossen",
-      "year": 1996,
-      "spotifyTrackId": "3qBFXJhJq6J12rwE4U4tH8",
-      "spotifyUrl": "https://open.spotify.com/track/3qBFXJhJq6J12rwE4U4tH8",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/3qBFXJhJq6J12rwE4U4tH8"
-    },
-    {
-      "id": 69,
-      "title": "Vi Elsker Bare Danske Piger",
-      "artist": "Jørgen Olsen",
-      "year": 2007,
-      "spotifyTrackId": "5D5zdc9uMWFQPFhtq0Cat1",
-      "spotifyUrl": "https://open.spotify.com/track/5D5zdc9uMWFQPFhtq0Cat1",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/5D5zdc9uMWFQPFhtq0Cat1"
-    },
-    {
-      "id": 70,
-      "title": "Vi Maler Byen Rød",
-      "artist": "Birthe Kjær",
-      "year": 1996,
-      "spotifyTrackId": "5R7qlPnCh9qVEtNaHIyPvh",
-      "spotifyUrl": "https://open.spotify.com/track/5R7qlPnCh9qVEtNaHIyPvh",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/5R7qlPnCh9qVEtNaHIyPvh"
-    },
-    {
-      "id": 71,
-      "title": "Video video",
-      "artist": "Brixx",
-      "year": 2011,
-      "spotifyTrackId": "3DVLhTPAXbi5n2Cw0QuHfp",
-      "spotifyUrl": "https://open.spotify.com/track/3DVLhTPAXbi5n2Cw0QuHfp",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/3DVLhTPAXbi5n2Cw0QuHfp"
-    },
-    {
-      "id": 72,
-      "title": "Vild med eventyr",
-      "artist": "Fenders",
-      "year": 2018,
-      "spotifyTrackId": "6gPy62DrPSU7CEqFN0rDA3",
-      "spotifyUrl": "https://open.spotify.com/track/6gPy62DrPSU7CEqFN0rDA3",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/6gPy62DrPSU7CEqFN0rDA3"
-    },
-    {
-      "id": 73,
-      "title": "Vis Mig Hvem Du Er",
-      "artist": "Malene Winther Mortensen",
-      "year": 2012,
-      "spotifyTrackId": "77pboBzNQINakCOoMnlTA4",
-      "spotifyUrl": "https://open.spotify.com/track/77pboBzNQINakCOoMnlTA4",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/77pboBzNQINakCOoMnlTA4"
-    },
-    {
-      "id": 74,
-      "title": "The Way You Are",
-      "artist": "Anti Social Media",
-      "year": 2015,
-      "spotifyTrackId": "0pwulfH8zd2qkRfjTZnfwf",
-      "spotifyUrl": "https://open.spotify.com/track/0pwulfH8zd2qkRfjTZnfwf",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/0pwulfH8zd2qkRfjTZnfwf"
-    },
-    {
-      "id": 75,
-      "title": "Where I Am",
-      "artist": "Anja Nissen",
-      "year": 2017,
-      "spotifyTrackId": "7kb2fTKlBt0EdLrlayGdVS",
-      "spotifyUrl": "https://open.spotify.com/track/7kb2fTKlBt0EdLrlayGdVS",
-      "spotifyEmbedUrl": "https://open.spotify.com/embed/track/7kb2fTKlBt0EdLrlayGdVS"
-    }
-  ]
-}
+[
+  {
+    "year": 2009,
+    "title": "A La Carte",
+    "artist": "Snapshot",
+    "spotifyUrl": "https://open.spotify.com/search/A%20La%20Carte%20Snapshot"
+  },
+  {
+    "year": 2004,
+    "title": "All Night Long",
+    "artist": "Simon Mathew",
+    "spotifyUrl": "https://open.spotify.com/search/All%20Night%20Long%20Simon%20Mathew"
+  },
+  {
+    "year": 1992,
+    "title": "Alt Det Som Ingen Ser",
+    "artist": "KENNY & LOTTE",
+    "spotifyUrl": "https://open.spotify.com/search/Alt%20Det%20Som%20Ingen%20Ser%20KENNY%20%26%20LOTTE"
+  },
+  {
+    "year": 2002,
+    "title": "Angelique",
+    "artist": "Dario Campeotto",
+    "spotifyUrl": "https://open.spotify.com/search/Angelique%20Dario%20Campeotto"
+  },
+  {
+    "year": 2001,
+    "title": "AUSTRALIAN SPRING",
+    "artist": "Basix",
+    "spotifyUrl": "https://open.spotify.com/search/AUSTRALIAN%20SPRING%20Basix"
+  },
+  {
+    "year": 2009,
+    "title": "Believe Again",
+    "artist": "Brinck",
+    "spotifyUrl": "https://open.spotify.com/search/Believe%20Again%20Brinck"
+  },
+  {
+    "year": 2009,
+    "title": "Boom Boom",
+    "artist": "Mabel",
+    "spotifyUrl": "https://open.spotify.com/search/Boom%20Boom%20Mabel"
+  },
+  {
+    "year": 2010,
+    "title": "Breathing",
+    "artist": "Bryan Rice",
+    "spotifyUrl": "https://open.spotify.com/search/Breathing%20Bryan%20Rice"
+  },
+  {
+    "year": 2014,
+    "title": "Cliche Love Song",
+    "artist": "Basim",
+    "spotifyUrl": "https://open.spotify.com/search/Cliche%20Love%20Song%20Basim"
+  },
+  {
+    "year": 2017,
+    "title": "Dansevise",
+    "artist": "Grethe Ingmann Jørgen Ingmann",
+    "spotifyUrl": "https://open.spotify.com/search/Dansevise%20Grethe%20Ingmann%20J%C3%B8rgen%20Ingmann"
+  },
+  {
+    "year": 2009,
+    "title": "Det Det",
+    "artist": "Sukkerchok",
+    "spotifyUrl": "https://open.spotify.com/search/Det%20Det%20Sukkerchok"
+  },
+  {
+    "year": 1986,
+    "title": "Det' det jeg altid har sagt (Heldig fyr) - 2010 - Remaster",
+    "artist": "Tommy Seebach",
+    "spotifyUrl": "https://open.spotify.com/search/Det%27%20det%20jeg%20altid%20har%20sagt%20%28Heldig%20fyr%29%20-%202010%20-%20Remaster%20Tommy%20Seebach"
+  },
+  {
+    "year": 2011,
+    "title": "Det' en hemlighed",
+    "artist": "Lecia",
+    "spotifyUrl": "https://open.spotify.com/search/Det%27%20en%20hemlighed%20Lecia"
+  },
+  {
+    "year": 1998,
+    "title": "Det' gratis - 1998 Digital Remaster",
+    "artist": "Tommy Seebach",
+    "spotifyUrl": "https://open.spotify.com/search/Det%27%20gratis%20-%201998%20Digital%20Remaster%20Tommy%20Seebach"
+  },
+  {
+    "year": 1996,
+    "title": "Det' lige det",
+    "artist": "Kirsten Og Søren",
+    "spotifyUrl": "https://open.spotify.com/search/Det%27%20lige%20det%20Kirsten%20Og%20S%C3%B8ren"
+  },
+  {
+    "year": 2001,
+    "title": "Der står et billede af dig på mit bord",
+    "artist": "Rollo & King",
+    "spotifyUrl": "https://open.spotify.com/search/Der%20st%C3%A5r%20et%20billede%20af%20dig%20p%C3%A5%20mit%20bord%20Rollo%20%26%20King"
+  },
+  {
+    "year": 2011,
+    "title": "Disco Tango",
+    "artist": "Tommy Seebach",
+    "spotifyUrl": "https://open.spotify.com/search/Disco%20Tango%20Tommy%20Seebach"
+  },
+  {
+    "year": 2011,
+    "title": "Donna Donna",
+    "artist": "John Hatting",
+    "spotifyUrl": "https://open.spotify.com/search/Donna%20Donna%20John%20Hatting"
+  },
+  {
+    "year": 2007,
+    "title": "Drama Queen",
+    "artist": "DQ",
+    "spotifyUrl": "https://open.spotify.com/search/Drama%20Queen%20DQ"
+  },
+  {
+    "year": 1998,
+    "title": "Du Er Fuld Af Løgn",
+    "artist": "Trax",
+    "spotifyUrl": "https://open.spotify.com/search/Du%20Er%20Fuld%20Af%20L%C3%B8gn%20Trax"
+  },
+  {
+    "year": 2010,
+    "title": "En Lille Melodi - 2010 version - Bonus Track",
+    "artist": "Anne Herdorf",
+    "spotifyUrl": "https://open.spotify.com/search/En%20Lille%20Melodi%20-%202010%20version%20-%20Bonus%20Track%20Anne%20Herdorf"
+  },
+  {
+    "year": 2000,
+    "title": "Fly on the Wings of Love",
+    "artist": "Brødrene Olsen",
+    "spotifyUrl": "https://open.spotify.com/search/Fly%20on%20the%20Wings%20of%20Love%20Br%C3%B8drene%20Olsen"
+  },
+  {
+    "year": 1990,
+    "title": "Fugle",
+    "artist": "Jorgen Olsen",
+    "spotifyUrl": "https://open.spotify.com/search/Fugle%20Jorgen%20Olsen"
+  },
+  {
+    "year": 1998,
+    "title": "Gi'r du et knus",
+    "artist": "Snapshot",
+    "spotifyUrl": "https://open.spotify.com/search/Gi%27r%20du%20et%20knus%20Snapshot"
+  },
+  {
+    "year": 2016,
+    "title": "Heart Shaped Hole",
+    "artist": "Simone",
+    "spotifyUrl": "https://open.spotify.com/search/Heart%20Shaped%20Hole%20Simone"
+  },
+  {
+    "year": 2018,
+    "title": "Higher Ground",
+    "artist": "Rasmussen",
+    "spotifyUrl": "https://open.spotify.com/search/Higher%20Ground%20Rasmussen"
+  },
+  {
+    "year": 1998,
+    "title": "Hip Hurra - Det' Min Fødselsdag",
+    "artist": "Tommy Seebach",
+    "spotifyUrl": "https://open.spotify.com/search/Hip%20Hurra%20-%20Det%27%20Min%20F%C3%B8dselsdag%20Tommy%20Seebach"
+  },
+  {
+    "year": 1998,
+    "title": "Hvad Er Du Ude På?",
+    "artist": "Birthe Kjær",
+    "spotifyUrl": "https://open.spotify.com/search/Hvad%20Er%20Du%20Ude%20P%C3%A5%3F%20Birthe%20Kj%C3%A6r"
+  },
+  {
+    "year": 2011,
+    "title": "Hvis nu lykken findes",
+    "artist": "Lecia",
+    "spotifyUrl": "https://open.spotify.com/search/Hvis%20nu%20lykken%20findes%20Lecia"
+  },
+  {
+    "year": 2012,
+    "title": "I Must Be Crazy",
+    "artist": "Sweethearts",
+    "spotifyUrl": "https://open.spotify.com/search/I%20Must%20Be%20Crazy%20Sweethearts"
+  },
+  {
+    "year": 2010,
+    "title": "In A Moment Like This",
+    "artist": "Chanée & n'evergreen",
+    "spotifyUrl": "https://open.spotify.com/search/In%20A%20Moment%20Like%20This%20Chan%C3%A9e%20%26%20n%27evergreen"
+  },
+  {
+    "year": 1998,
+    "title": "Ka' du se hva' jeg sa'e",
+    "artist": "Kirsten Og Søren",
+    "spotifyUrl": "https://open.spotify.com/search/Ka%27%20du%20se%20hva%27%20jeg%20sa%27e%20Kirsten%20Og%20S%C3%B8ren"
+  },
+  {
+    "year": 2010,
+    "title": "Kloden Drejer",
+    "artist": "Gry Johansen",
+    "spotifyUrl": "https://open.spotify.com/search/Kloden%20Drejer%20Gry%20Johansen"
+  },
+  {
+    "year": 1998,
+    "title": "Krøller eller ej (feat. Debbie Cameron)",
+    "artist": "Tommy Seebach Debbie Cameron",
+    "spotifyUrl": "https://open.spotify.com/search/Kr%C3%B8ller%20eller%20ej%20%28feat.%20Debbie%20Cameron%29%20Tommy%20Seebach%20Debbie%20Cameron"
+  },
+  {
+    "year": 2010,
+    "title": "Kæmper For Kærlighed",
+    "artist": "Sukkerchok",
+    "spotifyUrl": "https://open.spotify.com/search/K%C3%A6mper%20For%20K%C3%A6rlighed%20Sukkerchok"
+  },
+  {
+    "year": 2010,
+    "title": "La' Mig Være",
+    "artist": "The Dreams",
+    "spotifyUrl": "https://open.spotify.com/search/La%27%20Mig%20V%C3%A6re%20The%20Dreams"
+  },
+  {
+    "year": 1992,
+    "title": "Lige der hvor hjertet slår",
+    "artist": "Anders Frandsen",
+    "spotifyUrl": "https://open.spotify.com/search/Lige%20der%20hvor%20hjertet%20sl%C3%A5r%20Anders%20Frandsen"
+  },
+  {
+    "year": 2019,
+    "title": "Love Is Forever",
+    "artist": "Leonora",
+    "spotifyUrl": "https://open.spotify.com/search/Love%20Is%20Forever%20Leonora"
+  },
+  {
+    "year": 2013,
+    "title": "New Tomorrow",
+    "artist": "A Friend In London",
+    "spotifyUrl": "https://open.spotify.com/search/New%20Tomorrow%20A%20Friend%20In%20London"
+  },
+  {
+    "year": 2013,
+    "title": "Only Teardrops",
+    "artist": "Emmelie de Forest",
+    "spotifyUrl": "https://open.spotify.com/search/Only%20Teardrops%20Emmelie%20de%20Forest"
+  },
+  {
+    "year": 2004,
+    "title": "Prinsesse",
+    "artist": "Zididada",
+    "spotifyUrl": "https://open.spotify.com/search/Prinsesse%20Zididada"
+  },
+  {
+    "year": 1998,
+    "title": "Pyjamas for to - 1998 - Remaster",
+    "artist": "Tommy Seebach",
+    "spotifyUrl": "https://open.spotify.com/search/Pyjamas%20for%20to%20-%201998%20-%20Remaster%20Tommy%20Seebach"
+  },
+  {
+    "year": 1978,
+    "title": "San Francisco",
+    "artist": "Brdr Olsen",
+    "spotifyUrl": "https://open.spotify.com/search/San%20Francisco%20Brdr%20Olsen"
+  },
+  {
+    "year": 2012,
+    "title": "Should´ve Known Better",
+    "artist": "Soluna Samay",
+    "spotifyUrl": "https://open.spotify.com/search/Should%C2%B4ve%20Known%20Better%20Soluna%20Samay"
+  },
+  {
+    "year": 1996,
+    "title": "Sig det som det er",
+    "artist": "Kirsten Og Søren",
+    "spotifyUrl": "https://open.spotify.com/search/Sig%20det%20som%20det%20er%20Kirsten%20Og%20S%C3%B8ren"
+  },
+  {
+    "year": 2004,
+    "title": "Sig Det' Løgn",
+    "artist": "Tomas Thordarson",
+    "spotifyUrl": "https://open.spotify.com/search/Sig%20Det%27%20L%C3%B8gn%20Tomas%20Thordarson"
+  },
+  {
+    "year": 2010,
+    "title": "Sindssyg",
+    "artist": "Johnny Deluxe",
+    "spotifyUrl": "https://open.spotify.com/search/Sindssyg%20Johnny%20Deluxe"
+  },
+  {
+    "year": 2000,
+    "title": "Skibet Skal Sejle I Nat",
+    "artist": "Gustav Winckler Birthe Wilke",
+    "spotifyUrl": "https://open.spotify.com/search/Skibet%20Skal%20Sejle%20I%20Nat%20Gustav%20Winckler%20Birthe%20Wilke"
+  },
+  {
+    "year": 1985,
+    "title": "Sku' du spørg' fra no'en",
+    "artist": "Kirsten Og Søren",
+    "spotifyUrl": "https://open.spotify.com/search/Sku%27%20du%20sp%C3%B8rg%27%20fra%20no%27en%20Kirsten%20Og%20S%C3%B8ren"
+  },
+  {
+    "year": 2011,
+    "title": "Sleepless",
+    "artist": "Anne Noa",
+    "spotifyUrl": "https://open.spotify.com/search/Sleepless%20Anne%20Noa"
+  },
+  {
+    "year": 2000,
+    "title": "Smuk som et stjerneskud",
+    "artist": "Brødrene Olsen",
+    "spotifyUrl": "https://open.spotify.com/search/Smuk%20som%20et%20stjerneskud%20Br%C3%B8drene%20Olsen"
+  },
+  {
+    "year": 2016,
+    "title": "Soldiers Of Love",
+    "artist": "Lighthouse X",
+    "spotifyUrl": "https://open.spotify.com/search/Soldiers%20Of%20Love%20Lighthouse%20X"
+  },
+  {
+    "year": 2012,
+    "title": "Solens Sang",
+    "artist": "NEIGHBOURS",
+    "spotifyUrl": "https://open.spotify.com/search/Solens%20Sang%20NEIGHBOURS"
+  },
+  {
+    "year": 2012,
+    "title": "Spanish Soul",
+    "artist": "Sandee May",
+    "spotifyUrl": "https://open.spotify.com/search/Spanish%20Soul%20Sandee%20May"
+  },
+  {
+    "year": 2018,
+    "title": "Starlight",
+    "artist": "Anna Ritsmar",
+    "spotifyUrl": "https://open.spotify.com/search/Starlight%20Anna%20Ritsmar"
+  },
+  {
+    "year": 2011,
+    "title": "Stemmen i mit liv",
+    "artist": "Kolig Kaj",
+    "spotifyUrl": "https://open.spotify.com/search/Stemmen%20i%20mit%20liv%20Kolig%20Kaj"
+  },
+  {
+    "year": 2012,
+    "title": "Take Our Hearts - Original",
+    "artist": "Jesper Nohrstedt",
+    "spotifyUrl": "https://open.spotify.com/search/Take%20Our%20Hearts%20-%20Original%20Jesper%20Nohrstedt"
+  },
+  {
+    "year": 1996,
+    "title": "To lys på et bord - 1996 Digital Remaster",
+    "artist": "Otto Brandenburg",
+    "spotifyUrl": "https://open.spotify.com/search/To%20lys%20p%C3%A5%20et%20bord%20-%201996%20Digital%20Remaster%20Otto%20Brandenburg"
+  },
+  {
+    "year": 2003,
+    "title": "Tree Of Life",
+    "artist": "UNITE",
+    "spotifyUrl": "https://open.spotify.com/search/Tree%20Of%20Life%20UNITE"
+  },
+  {
+    "year": 2006,
+    "title": "Twist Of Love",
+    "artist": "Sidsel Ben Semmane",
+    "spotifyUrl": "https://open.spotify.com/search/Twist%20Of%20Love%20Sidsel%20Ben%20Semmane"
+  },
+  {
+    "year": 2007,
+    "title": "Two Are Stronger Than One",
+    "artist": "Me & My",
+    "spotifyUrl": "https://open.spotify.com/search/Two%20Are%20Stronger%20Than%20One%20Me%20%26%20My"
+  },
+  {
+    "year": 2005,
+    "title": "Tænder På Dig",
+    "artist": "Jakob Sveistrup",
+    "spotifyUrl": "https://open.spotify.com/search/T%C3%A6nder%20P%C3%A5%20Dig%20Jakob%20Sveistrup"
+  },
+  {
+    "year": 1980,
+    "title": "Tænker Altid På Dig",
+    "artist": "Bamses Venner",
+    "spotifyUrl": "https://open.spotify.com/search/T%C3%A6nker%20Altid%20P%C3%A5%20Dig%20Bamses%20Venner"
+  },
+  {
+    "year": 1979,
+    "title": "Ud I Det Blå - Remastret",
+    "artist": "Kim Larsen",
+    "spotifyUrl": "https://open.spotify.com/search/Ud%20I%20Det%20Bl%C3%A5%20-%20Remastret%20Kim%20Larsen"
+  },
+  {
+    "year": 2014,
+    "title": "Under Stjernerne På Himlen",
+    "artist": "Tommy Seebach",
+    "spotifyUrl": "https://open.spotify.com/search/Under%20Stjernerne%20P%C3%A5%20Himlen%20Tommy%20Seebach"
+  },
+  {
+    "year": 2012,
+    "title": "Universe - Original Dansk Melodi Grand Prix 2012 Version",
+    "artist": "Karen Viuff",
+    "spotifyUrl": "https://open.spotify.com/search/Universe%20-%20Original%20Dansk%20Melodi%20Grand%20Prix%202012%20Version%20Karen%20Viuff"
+  },
+  {
+    "year": 2012,
+    "title": "Venter (Christian Brøns & Patrik Isaksson)",
+    "artist": "Christian Brøns Patrik Isaksson",
+    "spotifyUrl": "https://open.spotify.com/search/Venter%20%28Christian%20Br%C3%B8ns%20%26%20Patrik%20Isaksson%29%20Christian%20Br%C3%B8ns%20Patrik%20Isaksson"
+  },
+  {
+    "year": 1996,
+    "title": "Vi Danser Rock Og Rul",
+    "artist": "Stig Rossen",
+    "spotifyUrl": "https://open.spotify.com/search/Vi%20Danser%20Rock%20Og%20Rul%20Stig%20Rossen"
+  },
+  {
+    "year": 2007,
+    "title": "Vi Elsker Bare Danske Piger",
+    "artist": "Jørgen Olsen",
+    "spotifyUrl": "https://open.spotify.com/search/Vi%20Elsker%20Bare%20Danske%20Piger%20J%C3%B8rgen%20Olsen"
+  },
+  {
+    "year": 1996,
+    "title": "Vi Maler Byen Rød",
+    "artist": "Birthe Kjær",
+    "spotifyUrl": "https://open.spotify.com/search/Vi%20Maler%20Byen%20R%C3%B8d%20Birthe%20Kj%C3%A6r"
+  },
+  {
+    "year": 2011,
+    "title": "Video video",
+    "artist": "Brixx",
+    "spotifyUrl": "https://open.spotify.com/search/Video%20video%20Brixx"
+  },
+  {
+    "year": 2018,
+    "title": "Vild med eventyr",
+    "artist": "Fenders",
+    "spotifyUrl": "https://open.spotify.com/search/Vild%20med%20eventyr%20Fenders"
+  },
+  {
+    "year": 2012,
+    "title": "Vis Mig Hvem Du Er",
+    "artist": "Malene Winther Mortensen",
+    "spotifyUrl": "https://open.spotify.com/search/Vis%20Mig%20Hvem%20Du%20Er%20Malene%20Winther%20Mortensen"
+  },
+  {
+    "year": 2015,
+    "title": "The Way You Are",
+    "artist": "Anti Social Media",
+    "spotifyUrl": "https://open.spotify.com/search/The%20Way%20You%20Are%20Anti%20Social%20Media"
+  },
+  {
+    "year": 2017,
+    "title": "Where I Am",
+    "artist": "Anja Nissen",
+    "spotifyUrl": "https://open.spotify.com/search/Where%20I%20Am%20Anja%20Nissen"
+  }
+]

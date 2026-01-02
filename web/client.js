@@ -236,6 +236,13 @@ function renderRound(){
     el('djSongTitle').innerText = state.current_song.title;
     el('djSongMeta').innerText = state.current_song.artist + ' ('+state.current_song.year+')';
     el('playLink').href = state.current_song.spotifyUrl;
+    // DJ can skip a bad song
+    el('skipSongBtn').disabled = false;
+    el('skipSongBtn').classList.remove('hidden');
+  } else {
+    // Hide/disable skip button when not DJ or no song yet
+    el('skipSongBtn').disabled = true;
+    el('skipSongBtn').classList.add('hidden');
   }
 
   // Guess list: show who has guessed (do not reveal year in-round)
@@ -442,6 +449,16 @@ el('startTimerBtn').onclick = async () => {
     await refreshState();
 }catch(e){
     alert('Kunne ikke starte timer: ' + e.message);
+  }
+};
+
+el('skipSongBtn').onclick = async () => {
+  try{
+    // DJ: skip current song (no points) and draw a new random song in the same category
+    await api({action:'skip_song', room, player: player.id});
+    await refreshState();
+  }catch(e){
+    alert('Kunne ikke springe sang over: ' + e.message);
   }
 };
 

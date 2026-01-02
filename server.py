@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.13-github-ready"
+VERSION = "v1.4.15-github-ready"
 rooms = {}
 
 def gen_code(n=4):
@@ -40,6 +40,25 @@ def load_songsets():
                 songsets[cat] = json.load(f)
         except Exception:
             pass
+
+    # Auto-generate decade categories from the Standard set (and keep any explicit categories intact).
+    # This makes it possible to pick e.g. "1990" / "2000" and only get songs from that decade.
+    decade_map = {}
+    for s in songsets.get("Standard", []) or []:
+        try:
+            y = int(s.get("year"))
+        except Exception:
+            continue
+        decade = (y // 10) * 10
+        decade_map.setdefault(decade, []).append(s)
+
+    for decade, songs in decade_map.items():
+        # Two aliases for the same decade.
+        key_plain = str(decade)          # e.g. "1990"
+        key_dk = f"{decade}'erne"       # e.g. "1990'erne"
+        songsets.setdefault(key_plain, songs)
+        songsets.setdefault(key_dk, songs)
+
     return songsets
 
 SONGSETS = load_songsets()
@@ -245,6 +264,62 @@ def api():
         room["round_started_at"] = started_at
         return jsonify({"ok": True, "round_started_at": started_at})
 
+    if action == "skip_song":
+        room = rooms.get(data.get("room"))
+        if not room:
+            return jsonify({"error": "room_not_found"}), 400
+
+        # only allow when a round is active
+        if not room.get("started") or room.get("status") != "round" or not room.get("current_song"):
+            return jsonify({"error": "no_active_round"}), 400
+
+        # only DJ can skip
+        pid = data.get("player")
+        try:
+            dj = room["players"][room.get("dj_index", 0)]
+        except Exception:
+            dj = None
+        if dj and pid and pid != dj.get("id"):
+            return jsonify({"error": "not_dj"}), 400
+
+        # draw a new song from the SAME category
+        cat = room.get("current_song", {}).get("category")
+        # ensure pool exists
+        unused = room.get("unused_songs")
+        if unused is None:
+            unused = []
+            room["unused_songs"] = unused
+        if not unused:
+            room["unused_songs"] = songs.copy()
+            random.shuffle(room["unused_songs"])
+            unused = room["unused_songs"]
+
+        picked = None
+        # try a handful of draws to find matching category
+        for _ in range(len(unused) + 5):
+            if not unused:
+                break
+            candidate = unused.pop()
+            if not cat or candidate.get("category") == cat:
+                picked = candidate
+                break
+            # put back at front if wrong category
+            unused.insert(0, candidate)
+
+        if not picked:
+            # fallback: pick any song
+            if unused:
+                picked = unused.pop()
+            else:
+                picked = random.choice(songs)
+
+        room["current_song"] = picked
+        room["guesses"] = {}
+        room["last_round_points"] = {}
+        room["round_started_at"] = None
+
+        return jsonify(room)
+
     if action == "submit_guess":
         room = rooms.get(data.get("room"))
         if not room:
@@ -310,7 +385,15 @@ def api():
         room["history"] = []
         return jsonify({"ok": True})
     if action == "categories":
-        return jsonify({"categories": sorted(SONGSETS.keys())})
+        cats = list(SONGSETS.keys())
+        def sort_key(c: str):
+            if c == "Standard":
+                return (0, 0, c)
+            # decade numbers (e.g. "1990") before other text categories
+            if c.isdigit() and len(c) == 4:
+                return (1, int(c), c)
+            return (2, 0, c)
+        return jsonify({"categories": sorted(cats, key=sort_key)})
 
     if action == "set_category":
         room = rooms.get(data.get("room"))

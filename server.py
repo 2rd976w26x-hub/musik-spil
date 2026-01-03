@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.18-github-ready"
+VERSION = "v1.4.19-github-ready"
 rooms = {}
 
 # --- connection / presence tracking ---
@@ -254,7 +254,13 @@ def files(path):
 
 @app.route("/api", methods=["POST"])
 def api():
-    data = request.json or {}
+    # Be permissive: some clients/proxies may omit or alter the Content-Type header.
+    # Using silent=True avoids raising and lets us respond with a clean JSON error.
+    data = request.get_json(silent=True) or {}
+
+    # Also accept form-encoded payloads (defensive fallback).
+    if not data and request.form:
+        data = request.form.to_dict(flat=True)
     action = data.get("action")
 
     # Common: touch player + cleanup inactive players on any request that includes a room code.

@@ -1,8 +1,10 @@
-# Musik Spil (v1.4.18)
+# Musik Spil (v1.4.19)
 
 Denne ZIP er **baseret direkte på `musik-spil-v1.4.7-github-ready.zip`** (den stabile version).
 
-## Hvad er nyt i v1.4.18
+## Hvad er nyt i v1.4.19
+
+- Robust /api JSON parsing (fixer 400-fejl hvor version vises som "?" og "Opret rum" ikke reagerer, hvis Content-Type header mangler/ændres).
 
 - Mere stilren Spotify/DJ-visning (kort-layout + optional preview embed).
 

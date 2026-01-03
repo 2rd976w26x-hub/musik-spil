@@ -110,6 +110,10 @@ async function loadVersion(){
 }
 
 async function api(d){
+  d = d || {};
+  // attach current player id to every request (used for reconnect/timeout handling)
+  if (typeof player !== 'undefined' && player && player.id && !d.player){ d.player = player.id; }
+
   const r = await fetch('/api',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -435,7 +439,7 @@ if(categorySelect){
 
 el('startGameBtn').onclick = async () => {
   try{
-    await api({action:'start_game', room});
+    await api({action:'start_game', room, rounds_total: parseInt(document.getElementById('roundsSelect').value,10)});
     await refreshState();
   }catch(e){
     alert('Kunne ikke starte spil: ' + e.message);

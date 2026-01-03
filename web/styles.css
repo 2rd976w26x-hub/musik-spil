@@ -154,65 +154,6 @@ body{
 
 .linkBtn{width:100%;margin:6px 0 10px 0}
 
-/* --- Spotify / DJ UI --- */
-.spotifyCard{
-  width:100%;
-  border-radius:18px;
-  border:1px solid var(--border);
-  padding:12px;
-  background:linear-gradient(180deg, rgba(29,185,84,.12) 0%, rgba(255,255,255,.65) 55%, rgba(255,255,255,.55) 100%);
-  box-shadow:0 10px 24px rgba(0,0,0,.08);
-}
-.spotifyTop{
-  display:flex;
-  gap:12px;
-  align-items:center;
-}
-.spotifyLogo{
-  width:40px;
-  height:40px;
-  border-radius:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:rgba(0,0,0,.06);
-  border:1px solid rgba(0,0,0,.06);
-}
-.spotifyInfo{min-width:0; flex:1;}
-.spotifyTitle{
-  font-size:16px;
-  font-weight:800;
-  line-height:1.2;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-.spotifyMeta{
-  font-size:13px;
-  color:rgba(30,30,30,.72);
-  margin-top:2px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-.spotifyActions{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:10px;
-}
-.spotifyActions .btn{flex:1}
-.spotifyActions .btnSmall{flex:0 0 auto}
-.spotifyEmbedWrap{margin-top:10px; display:none}
-.spotifyEmbedWrap.show{display:block}
-.spotifyEmbed{
-  width:100%;
-  height:152px;
-  border:0;
-  border-radius:14px;
-  overflow:hidden;
-}
-
 .sectionTitle{
   margin:14px 0 8px 0;
   font-size:13px;

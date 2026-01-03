@@ -1,14 +1,8 @@
-# Musik Spil (v1.4.19)
+# Musik Spil (v1.4.24)
 
 Denne ZIP er **baseret direkte på `musik-spil-v1.4.7-github-ready.zip`** (den stabile version).
 
-## Hvad er nyt i v1.4.19
-
-- Robust /api JSON parsing (fixer 400-fejl hvor version vises som "?" og "Opret rum" ikke reagerer, hvis Content-Type header mangler/ændres).
-
-- Mere stilren Spotify/DJ-visning (kort-layout + optional preview embed).
-
-## Hvad er nyt i v1.4.16
+## Hvad er nyt i v1.4.24
 
 - Vælger nu sange *random* inden for den valgte kategori.
   - Hvis der kun findes én sangliste (Standard), auto-genererer spillet årti-kategorier (fx 1990, 2000) ud fra sangenes årstal.

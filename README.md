@@ -1,8 +1,8 @@
-# Musik Spil (v1.4.17)
+# Musik Spil (v1.4.18)
 
 Denne ZIP er **baseret direkte på `musik-spil-v1.4.7-github-ready.zip`** (den stabile version).
 
-## Hvad er nyt i v1.4.17
+## Hvad er nyt i v1.4.18
 
 - Mere stilren Spotify/DJ-visning (kort-layout + optional preview embed).
 

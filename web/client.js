@@ -61,6 +61,7 @@ function stopCoverRotation(){
 }
 
 let room=null, player=null, state=null;
+let invalidRoomAlerted = false; // prevent repeated alerts if room disappears
 let categories = [];
 
 function el(id){ return document.getElementById(id); }
@@ -454,6 +455,19 @@ async function refreshState(){
     setNet(true);
     render();
   }catch(e){
+    // If the room no longer exists (server restarted), return user to lobby
+    if (String((e && e.message) || e || '') === 'room_not_found') {
+      if (!invalidRoomAlerted) {
+        invalidRoomAlerted = true;
+        alert('Rummet findes ikke længere (serveren er sandsynligvis genstartet). Opret eller join et nyt rum.');
+      }
+      room = null;
+      playerId = null;
+      state = null;
+      render();
+      setNet(false);
+      return;
+    }
     setNet(false);
     console.warn(e);
   }

@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.17-github-ready"
+VERSION = "v1.4.18-github-ready"
 rooms = {}
 
 # --- connection / presence tracking ---

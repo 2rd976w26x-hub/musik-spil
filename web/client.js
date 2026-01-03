@@ -61,63 +61,9 @@ function stopCoverRotation(){
 }
 
 let room=null, player=null, state=null;
-let invalidRoomAlerted = false; // prevent repeated alerts if room disappears
 let categories = [];
 
 function el(id){ return document.getElementById(id); }
-
-function parseSpotifyTrackId(url){
-  if(!url) return null;
-  // https://open.spotify.com/track/<id>?...
-  let m = url.match(/spotify\.com\/track\/([A-Za-z0-9]+)/i);
-  if(m && m[1]) return m[1];
-  // spotify:track:<id>
-  m = url.match(/spotify:track:([A-Za-z0-9]+)/i);
-  if(m && m[1]) return m[1];
-  return null;
-}
-
-let spotifyEmbedOpen = false;
-function setSpotifyEmbedOpen(open){
-  spotifyEmbedOpen = !!open;
-  const wrap = el('spotifyEmbedWrap');
-  const btn = el('toggleEmbedBtn');
-  if(!wrap || !btn) return;
-  wrap.classList.toggle('hidden', !spotifyEmbedOpen);
-  btn.innerText = spotifyEmbedOpen ? 'Skjul preview' : 'Vis preview';
-}
-
-function setupSpotifyEmbed(){
-  const btn = el('toggleEmbedBtn');
-  if(btn){
-    btn.addEventListener('click', ()=> setSpotifyEmbedOpen(!spotifyEmbedOpen));
-  }
-  // default collapsed
-  setSpotifyEmbedOpen(false);
-}
-
-function setSpotifyEmbed(url){
-  const wrap = el('spotifyEmbedWrap');
-  const iframe = el('spotifyEmbed');
-  const fallback = el('spotifyEmbedFallback');
-  const toggle = el('toggleEmbedBtn');
-  if(!wrap || !iframe || !fallback || !toggle) return;
-
-  const id = parseSpotifyTrackId(url);
-  if(!id){
-    iframe.src = '';
-    toggle.disabled = true;
-    toggle.classList.add('btnDisabled');
-    fallback.classList.remove('hidden');
-    return;
-  }
-
-  // Default hidden – user can open preview.
-  iframe.src = `https://open.spotify.com/embed/track/${id}?utm_source=generator&theme=0`;
-  toggle.disabled = false;
-  toggle.classList.remove('btnDisabled');
-  fallback.classList.add('hidden');
-}
 
 function setNet(ok){
   const ns = document.getElementById('netStatus');
@@ -164,10 +110,6 @@ async function loadVersion(){
 }
 
 async function api(d){
-  d = d || {};
-  // attach current player id to every request (used for reconnect/timeout handling)
-  if (typeof player !== 'undefined' && player && player.id && !d.player){ d.player = player.id; }
-
   const r = await fetch('/api',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -293,25 +235,7 @@ function renderRound(){
   if(isDJ && state.current_song){
     el('djSongTitle').innerText = state.current_song.title;
     el('djSongMeta').innerText = state.current_song.artist + ' ('+state.current_song.year+')';
-		const spotifyUrl = state.current_song.spotifyUrl || state.current_song.spotify_url || '';
-		el('playLink').href = spotifyUrl;
-		// Optional embedded preview (nicer UX on desktop; collapsible on mobile)
-		const trackId = parseSpotifyTrackId(spotifyUrl);
-		const iframe = el('spotifyEmbed');
-		const fallback = el('spotifyEmbedFallback');
-		const toggleBtn = el('toggleEmbedBtn');
-		if(trackId && iframe && fallback && toggleBtn){
-			iframe.src = `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0`;
-			fallback.href = spotifyUrl;
-			toggleBtn.classList.remove('hidden');
-			// Keep closed by default every new round
-			setSpotifyEmbedOpen(false);
-		} else {
-			// No embeddable URL; keep the UI clean
-			if(iframe) iframe.removeAttribute('src');
-			if(toggleBtn) toggleBtn.classList.add('hidden');
-			setSpotifyEmbedOpen(false);
-		}
+    el('playLink').href = state.current_song.spotifyUrl;
     // DJ can skip a bad song
     el('skipSongBtn').disabled = false;
     el('skipSongBtn').classList.remove('hidden');
@@ -455,25 +379,11 @@ async function refreshState(){
     setNet(true);
     render();
   }catch(e){
-    // If the room no longer exists (server restarted), return user to lobby
-    if (String((e && e.message) || e || '') === 'room_not_found') {
-      if (!invalidRoomAlerted) {
-        invalidRoomAlerted = true;
-        alert('Rummet findes ikke længere (serveren er sandsynligvis genstartet). Opret eller join et nyt rum.');
-      }
-      room = null;
-      playerId = null;
-      state = null;
-      render();
-      setNet(false);
-      return;
-    }
     setNet(false);
     console.warn(e);
   }
 }
 
-setupSpotifyEmbedToggle();
 loadVersion();
 loadCategories();
 setInterval(refreshState, 1000);
@@ -525,7 +435,7 @@ if(categorySelect){
 
 el('startGameBtn').onclick = async () => {
   try{
-    await api({action:'start_game', room, rounds_total: parseInt(document.getElementById('roundsSelect').value,10)});
+    await api({action:'start_game', room});
     await refreshState();
   }catch(e){
     alert('Kunne ikke starte spil: ' + e.message);

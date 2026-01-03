@@ -1,98 +1,12 @@
 from flask import Flask, request, jsonify, send_from_directory
-import json
 import random, string, time, json
 from copy import deepcopy
 import os
 
 app = Flask(__name__, static_folder="web", static_url_path="")
-
-
-@app.after_request
-def add_no_cache_headers(resp):
-    # Prevent stale JS/CSS after deploys (Render may return 304 from cache).
-    if request.path in ('/', '/client.js', '/styles.css') or request.path.startswith('/covers/'):
-        resp.headers['Cache-Control'] = 'no-store, max-age=0'
-        resp.headers['Pragma'] = 'no-cache'
-    return resp
-
 PORT = 8787
-VERSION = '1.4.22'
+VERSION = "v1.4.15-github-ready"
 rooms = {}
-
-# --- connection / presence tracking ---
-# If a client stops polling (e.g. closes tab / loses connection), we remove them after a timeout.
-PLAYER_TIMEOUT_SEC = 30
-
-def _touch_player(room, player_id):
-    if not room or not player_id:
-        return None
-    for p in room.get("players", []):
-        if p.get("id") == player_id:
-            p["last_seen"] = time.time()
-            p["connected"] = True
-            return p
-    return None
-
-def _remove_player(room, player_id):
-    """Remove player by id and keep indices consistent. Returns True if removed."""
-    if not room or not player_id:
-        return False
-    players = room.get("players", [])
-    idx = next((i for i, p in enumerate(players) if p.get("id") == player_id), None)
-    if idx is None:
-        return False
-
-    # Remove player
-    players.pop(idx)
-
-    # If room became empty, caller should delete it.
-    if not players:
-        return True
-
-    # Fix host
-    if room.get("host_id") == player_id:
-        room["host_id"] = players[0]["id"]
-
-    # Fix DJ index (keep pointing at same logical next player)
-    dj_index = int(room.get("dj_index", 0) or 0)
-    if idx < dj_index:
-        dj_index -= 1
-    elif idx == dj_index:
-        # DJ left -> new DJ is whoever is now at same index (or 0)
-        dj_index = dj_index % len(players)
-        room["waiting_for_dj"] = True
-        # if a round is ongoing, force round end so UI doesn't hang
-        if room.get("status") == "round":
-            room["status"] = "round_result"
-
-    room["dj_index"] = dj_index
-
-    # If game is running with fixed rounds_total, keep remaining rounds fair across remaining players
-    if room.get("started") and room.get("rounds_total"):
-        remaining = max(0, int(room["rounds_total"]) - int(room.get("round_index", 0)))
-        n = len(players)
-        if n > 0:
-            remaining_fair = (remaining // n) * n
-            room["rounds_total"] = int(room.get("round_index", 0)) + remaining_fair
-            if room.get("round_index", 0) >= room["rounds_total"]:
-                room["status"] = "game_over"
-                room["started"] = False
-
-    return True
-
-def _cleanup_inactive(room):
-    if not room:
-        return
-    now = time.time()
-    stale = []
-    for p in room.get("players", []):
-        last = p.get("last_seen", now)
-        if now - last > PLAYER_TIMEOUT_SEC:
-            stale.append(p.get("id"))
-    for pid in stale:
-        _remove_player(room, pid)
-
-
 
 def gen_code(n=4):
     return "".join(random.choices(string.ascii_uppercase, k=n))
@@ -265,45 +179,13 @@ def files(path):
 
 @app.route("/api", methods=["POST"])
 def api():
-    # Be permissive: some clients/proxies may omit or alter the Content-Type header.
-    # Using silent=True avoids raising and lets us respond with a clean JSON error.
-    # Accept JSON even if client/proxy sends a non-JSON content-type.
-    data = request.get_json(silent=True)
-    if data is None:
-        raw = (request.data or b'').strip()
-        if raw:
-            try:
-                import json as _json
-                data = _json.loads(raw.decode('utf-8'))
-            except Exception:
-                data = {}
-        else:
-            data = {}
-
-
-    # Also accept form-encoded payloads (defensive fallback).
-    if not data and request.form:
-        data = request.form.to_dict(flat=True)
+    data = request.json or {}
     action = data.get("action")
 
-    # Common: touch player + cleanup inactive players on any request that includes a room code.
-    room_code_common = data.get("room") or data.get("room_code")
-    if room_code_common:
-        room_common = rooms.get(room_code_common)
-        if room_common:
-            _cleanup_inactive(room_common)
-            pid_common = data.get("player") or data.get("player_id")
-            if pid_common:
-                _touch_player(room_common, pid_common)
-            if not room_common.get("players"):
-                rooms.pop(room_code_common, None)
-
-
     if action == "version":
-        # Keep both fields so old/new clients can read it.
-        return jsonify({"ok": True, "version": VERSION})
+        return jsonify({"version": VERSION})
 
-    if action in ("create_room", "create"):
+    if action == "create_room":
         room = gen_code()
         pid = gen_id()
         rooms[room] = {
@@ -325,7 +207,7 @@ def api():
             "round_started_at": None,
             "status": "lobby"
         }
-        return jsonify({"ok": True, "room": room_code, "player": {"id": pid}})
+        return jsonify({"room": room, "player": {"id": pid}})
 
     if action == "join":
         room = rooms.get(data.get("room"))
@@ -351,23 +233,6 @@ def api():
             return jsonify({"error": "room_not_found"}), 400
         if not room["unused_songs"]:
             room["unused_songs"] = get_songs_for_category(room.get("category")).copy()
-
-        # Only host can start
-        if data.get("player") != room.get("host_id"):
-            return jsonify({"error": "only_host_can_start"}), 403
-
-        # Rounds: ensure fairness (each player becomes DJ the same number of times)
-        try:
-            desired_rounds = int(data.get("rounds_total") or data.get("rounds") or room.get("rounds_total") or 10)
-        except Exception:
-            desired_rounds = int(room.get("rounds_total") or 10)
-
-        n_players = max(1, len(room.get("players", [])))
-        # round up to nearest multiple of players (minimum 1 full rotation)
-        desired_rounds = max(n_players, desired_rounds)
-        if desired_rounds % n_players != 0:
-            desired_rounds = ((desired_rounds + n_players - 1) // n_players) * n_players
-        room["rounds_total"] = desired_rounds
 
         room["started"] = True
         room["status"] = "round"
@@ -488,12 +353,6 @@ def api():
         if not room:
             return jsonify({"error": "room_not_found"}), 400
 
-        # stop if we reached the selected number of rounds
-        if room.get("rounds_total") and room.get("round_index", 0) >= int(room["rounds_total"]) - 1:
-            room["status"] = "game_over"
-            room["started"] = False
-            return jsonify({"ok": True, "room": room})
-
         room["round_index"] += 1
         if room["rounds_total"] and room["round_index"] >= room["rounds_total"]:
             room["status"] = "game_over"
@@ -561,16 +420,6 @@ def api():
         room = rooms.get(room_code)
         if not room:
             return jsonify({"ok": True})
-
-        removed = _remove_player(room, pid)
-        room.get("scores", {}).pop(pid, None)
-        room.get("guesses", {}).pop(pid, None)
-        room.get("last_round_points", {}).pop(pid, None)
-
-        if not room.get("players"):
-            rooms.pop(room_code, None)
-
-        return jsonify({"ok": True})
 
         room["players"] = [p for p in room.get("players", []) if p.get("id") != pid]
 

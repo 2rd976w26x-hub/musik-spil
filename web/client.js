@@ -199,6 +199,10 @@ function escapeHtml(str){
 }
 
 function renderLobby(){
+  if(!state){ return; }
+  // Hide room-only controls in lobby until a room exists
+  const roomOnly = document.getElementById('lobbyRoomOnly');
+  if(roomOnly){ roomOnly.classList.toggle('hidden', !room); }
   const ul = el('lobbyPlayers');
   ul.innerHTML = '';
   (state.players||[]).forEach(p=>{

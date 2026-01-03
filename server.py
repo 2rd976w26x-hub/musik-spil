@@ -1,11 +1,22 @@
 from flask import Flask, request, jsonify, send_from_directory
+import json
 import random, string, time, json
 from copy import deepcopy
 import os
 
 app = Flask(__name__, static_folder="web", static_url_path="")
+
+
+@app.after_request
+def add_no_cache_headers(resp):
+    # Prevent stale JS/CSS after deploys (Render may return 304 from cache).
+    if request.path in ('/', '/client.js', '/styles.css') or request.path.startswith('/covers/'):
+        resp.headers['Cache-Control'] = 'no-store, max-age=0'
+        resp.headers['Pragma'] = 'no-cache'
+    return resp
+
 PORT = 8787
-VERSION = "v1.4.19-github-ready"
+VERSION = '1.4.20'
 rooms = {}
 
 # --- connection / presence tracking ---
@@ -256,7 +267,19 @@ def files(path):
 def api():
     # Be permissive: some clients/proxies may omit or alter the Content-Type header.
     # Using silent=True avoids raising and lets us respond with a clean JSON error.
-    data = request.get_json(silent=True) or {}
+    # Accept JSON even if client/proxy sends a non-JSON content-type.
+    data = request.get_json(silent=True)
+    if data is None:
+        raw = (request.data or b'').strip()
+        if raw:
+            try:
+                import json as _json
+                data = _json.loads(raw.decode('utf-8'))
+            except Exception:
+                data = {}
+        else:
+            data = {}
+
 
     # Also accept form-encoded payloads (defensive fallback).
     if not data and request.form:

@@ -16,7 +16,7 @@ def add_no_cache_headers(resp):
     return resp
 
 PORT = 8787
-VERSION = '1.4.21'
+VERSION = '1.4.22'
 rooms = {}
 
 # --- connection / presence tracking ---
@@ -325,7 +325,7 @@ def api():
             "round_started_at": None,
             "status": "lobby"
         }
-        return jsonify({"room": room, "player": {"id": pid}})
+        return jsonify({"ok": True, "room": room_code, "player": {"id": pid}})
 
     if action == "join":
         room = rooms.get(data.get("room"))

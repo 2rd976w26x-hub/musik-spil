@@ -16,7 +16,7 @@ def add_no_cache_headers(resp):
     return resp
 
 PORT = 8787
-VERSION = '1.4.20'
+VERSION = '1.4.21'
 rooms = {}
 
 # --- connection / presence tracking ---
@@ -300,9 +300,10 @@ def api():
 
 
     if action == "version":
-        return jsonify({"version": VERSION})
+        # Keep both fields so old/new clients can read it.
+        return jsonify({"ok": True, "version": VERSION})
 
-    if action == "create_room":
+    if action in ("create_room", "create"):
         room = gen_code()
         pid = gen_id()
         rooms[room] = {

@@ -248,3 +248,31 @@ li{margin:6px 0}
 
 #timerText{font-size:16px; font-weight:900;}
 #timerText{display:inline-flex; padding:10px 14px; border-radius:999px; border:1px solid var(--border); background:#fff; margin:10px 0 12px 0;}
+
+
+/* iPhone year input fix (portrait): make year field stay usable and avoid shrinking to nothing */
+.yearInputRow{
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.yearInput{
+  flex: 1 1 140px;
+  min-width: 140px;
+  font-size: 16px; /* iOS: avoid zoom and keep readable */
+}
+
+.yearButtons{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 420px){
+  .yearInput{
+    min-width: 160px;
+  }
+  .yearButtons .btn{
+    flex: 1 1 auto;
+  }
+}

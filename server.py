@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.26-github-ready"
+VERSION = "v1.4.27-github-ready"
 rooms = {}
 
 def gen_code(n=4):
@@ -184,6 +184,14 @@ def api():
 
     if action == "version":
         return jsonify({"version": VERSION})
+
+    if action == "categories":
+        # Categories are based solely on the uploaded JSON songset files that exist on the server.
+        # (One category per JSON songset file, including the default songs.json)
+        return jsonify({
+            "ok": True,
+            "categories": sorted(list(SONGSETS.keys()))
+        })
 
     if action == "create_room":
         room = gen_code()

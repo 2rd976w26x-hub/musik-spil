@@ -15,7 +15,7 @@ except Exception:
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.31-github-ready"
+VERSION = "v1.4.32-github-ready"
 rooms = {}
 
 # Simple in-memory statistics (reset on deploy/restart)
@@ -612,16 +612,18 @@ def api():
         if not room.get("game_id"):
             room["game_id"] = str(uuid.uuid4())
         room["game_started_at"] = now()
-        DB.save_game(
-            game_id=room["game_id"],
-            room_code=room.get("room_code") or data.get("room"),
-            category=room.get("category"),
-            rounds_total=int(room.get("rounds") or 0),
-            players=room.get("players") or [],
-            history=room.get("history") or [],
-            started_at=room["game_started_at"],
-            ended_at=None,
-        )
+        try:
+            DB.save_game(
+                room.get("game_id") or gen_game_id(),
+                room_code,
+                room.get("category", ""),
+                room.get("rounds_total", 0),
+                room.get("guess_seconds", 0),
+                room.get("players", {}),
+                room.get("history", []),
+            )
+        except Exception as e:
+            app.logger.exception("DB.save_game failed in start_game")
         return jsonify({"ok": True})
 
     if action == "start_timer":

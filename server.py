@@ -15,7 +15,7 @@ except Exception:
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.30-github-ready"
+VERSION = "v1.4.31-github-ready"
 rooms = {}
 
 # Simple in-memory statistics (reset on deploy/restart)
@@ -243,6 +243,91 @@ class Db:
     def register_device(self, device_id: str):
         """Compatibility alias used by older code."""
         return self.upsert_device(device_id)
+    def save_game(
+        self,
+        game_id: str,
+        *,
+        room_code: str,
+        category: str,
+        rounds_total: int,
+        guessed_seconds: int,
+        players: list,
+        history: list,
+        ended: bool = False,
+    ) -> None:
+        """Upsert game row. If ended=True, delegates to save_game_end.
+
+        This keeps the game playable even when DB is optional and ensures the
+        admin history views have a row to read later.
+        """
+        if not self.enabled:
+            return
+        if ended:
+            # ensure a row exists, then update ended fields
+            self._upsert_game_row(
+                game_id,
+                room_code=room_code,
+                category=category,
+                rounds_total=rounds_total,
+                guessed_seconds=guessed_seconds,
+                players=players,
+                history=history,
+            )
+            self.save_game_end(game_id, players=players, history=history)
+            return
+
+        self._upsert_game_row(
+            game_id,
+            room_code=room_code,
+            category=category,
+            rounds_total=rounds_total,
+            guessed_seconds=guessed_seconds,
+            players=players,
+            history=history,
+        )
+
+    def _upsert_game_row(
+        self,
+        game_id: str,
+        *,
+        room_code: str,
+        category: str,
+        rounds_total: int,
+        guessed_seconds: int,
+        players: list,
+        history: list,
+    ) -> None:
+        """Internal helper to insert/update the main game row."""
+        import json
+        with self._conn() as c:
+            c.execute(
+                """
+                INSERT INTO game_history (
+                    game_id, room_code, category, rounds_total, guessed_seconds, players_json, history_json
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (game_id) DO UPDATE SET
+                    room_code = EXCLUDED.room_code,
+                    category = EXCLUDED.category,
+                    rounds_total = EXCLUDED.rounds_total,
+                    guessed_seconds = EXCLUDED.guessed_seconds,
+                    players_json = EXCLUDED.players_json,
+                    history_json = EXCLUDED.history_json
+                """,
+                (
+                    game_id,
+                    room_code,
+                    category,
+                    int(rounds_total),
+                    int(guessed_seconds),
+                    json.dumps(players or []),
+                    json.dumps(history or []),
+                ),
+            )
+
+    def game_by_id(self, game_id: str):
+        """Backward-compatible alias used by some admin routes."""
+        return self.get_game(game_id)
+
     def daily_metrics(self, days: int = 30):
         """Return daily series for the last N days."""
         try:

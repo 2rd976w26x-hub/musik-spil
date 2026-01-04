@@ -61,6 +61,19 @@ function stopCoverRotation(){
 }
 
 let room=null, player=null, state=null;
+
+// Stable per-device id (used to avoid joining the same room multiple times per device
+// and for simple anonymous server stats). Stored in localStorage.
+function getDeviceId(){
+  const k='piratwhist_device_id';
+  let id=localStorage.getItem(k);
+  if(!id){
+    // Prefer a UUID, but fall back to a simple random string.
+    id=(crypto && crypto.randomUUID) ? crypto.randomUUID() : (Math.random().toString(16).slice(2)+Date.now().toString(16));
+    localStorage.setItem(k,id);
+  }
+  return id;
+}
 let categories = [];
 
 function el(id){ return document.getElementById(id); }
@@ -110,6 +123,10 @@ async function loadVersion(){
 }
 
 async function api(d){
+  // Attach device id to all API calls.
+  if(d && typeof d==='object' && !d.device_id){
+    d.device_id = getDeviceId();
+  }
   const r = await fetch('/api',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -619,5 +636,6 @@ if(leaveBtn){
     if(rc){ rc.innerText=''; rc.classList.add('hidden'); }
     leaveBtn.classList.add('hidden');
     show('view-lobby');
+    renderLobby();
   };
 }

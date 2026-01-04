@@ -5,8 +5,15 @@ import os
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.27-github-ready"
+VERSION = "v1.4.28-github-ready"
 rooms = {}
+
+# Simple in-memory statistics (reset on deploy/restart)
+STATS = {
+    "unique_devices": set(),   # device_id values we've seen
+    "rooms_created": 0,
+    "games_completed": 0,
+}
 
 def gen_code(n=4):
     return "".join(random.choices(string.ascii_uppercase, k=n))
@@ -40,24 +47,6 @@ def load_songsets():
                 songsets[cat] = json.load(f)
         except Exception:
             pass
-
-    # Auto-generate decade categories from the Standard set (and keep any explicit categories intact).
-    # This makes it possible to pick e.g. "1990" / "2000" and only get songs from that decade.
-    decade_map = {}
-    for s in songsets.get("Standard", []) or []:
-        try:
-            y = int(s.get("year"))
-        except Exception:
-            continue
-        decade = (y // 10) * 10
-        decade_map.setdefault(decade, []).append(s)
-
-    for decade, songs in decade_map.items():
-        # Two aliases for the same decade.
-        key_plain = str(decade)          # e.g. "1990"
-        key_dk = f"{decade}'erne"       # e.g. "1990'erne"
-        songsets.setdefault(key_plain, songs)
-        songsets.setdefault(key_dk, songs)
 
     return songsets
 
@@ -182,6 +171,12 @@ def api():
     data = request.json or {}
     action = data.get("action")
 
+    # Best-effort device identifier sent from the client (stored in localStorage).
+    # Used for simple stats + to prevent multiple joins per device in the same room.
+    device_id = (data.get("device_id") or "").strip()[:64]
+    if device_id:
+        STATS["unique_devices"].add(device_id)
+
     if action == "version":
         return jsonify({"version": VERSION})
 
@@ -196,9 +191,10 @@ def api():
     if action == "create_room":
         room = gen_code()
         pid = gen_id()
+        STATS["rooms_created"] += 1
         rooms[room] = {
             "room_code": room,
-            "players": [{"id": pid, "name": data.get("name","") or "Spiller"}],
+            "players": [{"id": pid, "name": data.get("name","") or "Spiller", "device_id": device_id or None}],
             "host_id": pid,
             "started": False,
             "round_index": 0,
@@ -213,7 +209,9 @@ def api():
             "history": [],
             "timer_seconds": int(data.get("timer", 20)),
             "round_started_at": None,
-            "status": "lobby"
+            "status": "lobby",
+            "created_at": int(time.time()),
+            "completed_counted": False
         }
         return jsonify({"room": room, "player": {"id": pid}})
 
@@ -221,8 +219,17 @@ def api():
         room = rooms.get(data.get("room"))
         if not room:
             return jsonify({"error": "room_not_found"}), 400
+        # Enforce: only 1 join per device in the same room.
+        if device_id:
+            for p in room["players"]:
+                if (p.get("device_id") or "") == device_id:
+                    # Treat as reconnect from the same device; don't create a duplicate player.
+                    if data.get("name"):
+                        p["name"] = data.get("name","") or p.get("name")
+                    return jsonify({"player": {"id": p["id"], "reconnected": True}})
+
         pid = gen_id()
-        room["players"].append({"id": pid, "name": data.get("name","") or "Spiller"})
+        room["players"].append({"id": pid, "name": data.get("name","") or "Spiller", "device_id": device_id or None})
         room["scores"][pid] = 0
         room["last_round_points"][pid] = 0
         return jsonify({"player": {"id": pid}})
@@ -364,6 +371,9 @@ def api():
         room["round_index"] += 1
         if room["rounds_total"] and room["round_index"] >= room["rounds_total"]:
             room["status"] = "game_over"
+            if not room.get("_completed_counted"):
+                room["_completed_counted"] = True
+                STATS["games_completed"] += 1
             return jsonify({"ok": True})
 
         if not room["unused_songs"]:
@@ -455,3 +465,95 @@ def api():
         return jsonify({"ok": True})
 
     return jsonify({"error": "unknown_action"}), 400
+
+
+@app.route("/stats")
+def stats():
+    # Note: all of this is in-memory, resets on deploy/restart.
+    active_rooms = []
+    for code, r in rooms.items():
+        active_rooms.append({
+            "room": code,
+            "players": len(r.get("players") or []),
+            "status": r.get("status"),
+            "current_round": r.get("current_round"),
+            "rounds_total": r.get("rounds_total"),
+            "category": r.get("category"),
+            "dj_mode": bool(r.get("dj_mode")),
+        })
+
+    return jsonify({
+        "version": VERSION,
+        "unique_devices": len(STATS["unique_devices"]),
+        "rooms_created": STATS["rooms_created"],
+        "games_completed": STATS["games_completed"],
+        "active_rooms": active_rooms,
+        "active_rooms_count": len(active_rooms),
+    })
+
+
+@app.route("/admin")
+def admin_page():
+    # Simple built-in dashboard (no auth) — handy for quick checks.
+    return """<!doctype html>
+<html lang=\"da\">
+<head>
+  <meta charset=\"utf-8\" />
+  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />
+  <title>Piratwhist — Admin</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:18px;}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:12px 0 18px;}
+    .card{border:1px solid #e5e7eb;border-radius:12px;padding:12px;}
+    table{border-collapse:collapse;width:100%;}
+    th,td{border-bottom:1px solid #eee;padding:8px;text-align:left;}
+    th{font-size:12px;opacity:.8;}
+    .muted{opacity:.7;font-size:12px;}
+  </style>
+</head>
+<body>
+  <h1>Piratwhist — Admin</h1>
+  <div class=\"muted\">In-memory stats (nulstilles ved deploy/restart). Opdaterer hvert 2. sekund.</div>
+
+  <div class=\"cards\">
+    <div class=\"card\"><div class=\"muted\">Version</div><div id=\"v\">…</div></div>
+    <div class=\"card\"><div class=\"muted\">Unikke enheder</div><div id=\"u\">…</div></div>
+    <div class=\"card\"><div class=\"muted\">Rooms oprettet</div><div id=\"rc\">…</div></div>
+    <div class=\"card\"><div class=\"muted\">Spil gennemført</div><div id=\"gc\">…</div></div>
+    <div class=\"card\"><div class=\"muted\">Aktive rooms</div><div id=\"ar\">…</div></div>
+  </div>
+
+  <h2>Aktive rooms</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Room</th><th>Spillere</th><th>Status</th><th>Runde</th><th>Kategori</th><th>DJ</th>
+      </tr>
+    </thead>
+    <tbody id=\"rooms\"></tbody>
+  </table>
+
+<script>
+async function tick(){
+  const r = await fetch('/stats',{cache:'no-store'});
+  const s = await r.json();
+  document.getElementById('v').textContent = s.version;
+  document.getElementById('u').textContent = s.unique_devices;
+  document.getElementById('rc').textContent = s.rooms_created;
+  document.getElementById('gc').textContent = s.games_completed;
+  document.getElementById('ar').textContent = s.active_rooms_count;
+
+  const tbody = document.getElementById('rooms');
+  tbody.innerHTML = '';
+  for(const room of (s.active_rooms||[])){
+    const tr = document.createElement('tr');
+    const roundTxt = (room.current_round && room.rounds_total) ? `${room.current_round}/${room.rounds_total}` : '';
+    tr.innerHTML = `<td>${room.room}</td><td>${room.players}</td><td>${room.status||''}</td><td>${roundTxt}</td><td>${room.category||''}</td><td>${room.dj_mode?'ja':''}</td>`;
+    tbody.appendChild(tr);
+  }
+}
+tick();
+setInterval(tick, 2000);
+</script>
+</body>
+</html>"""

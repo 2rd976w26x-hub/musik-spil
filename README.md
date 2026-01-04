@@ -1,8 +1,11 @@
-# Musik Spil (v1.4.33)
+# Musik Spil (v1.4.34)
 
 Denne ZIP er **baseret direkte på `musik-spil-v1.4.7-github-ready.zip`** (den stabile version).
 
-## Hvad er nyt i v1.4.33
+## Hvad er nyt i v1.4.34
+
+- Rettelse: Gættetid, runder og kategori valgt i rummet bruges nu, når du trykker **Start spil**.
+- Rettelse: Spillet fejler ikke længere på sidste runde ("Kunne ikke næste runde: http_500").
 
 - **Valgfri Postgres-persistens** for statistik (spillet kører stadig fint uden database).
 - **Udbygget admin-dashboard**: grafer for besøg/rum/spil pr. dag + liste over seneste spil.

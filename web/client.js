@@ -468,7 +468,11 @@ if(categorySelect){
 
 el('startGameBtn').onclick = async () => {
   try{
-    await api({action:'start_game', room});
+    // Send current room settings so the server uses what the host selected
+    const timer = el('timerSelect') ? el('timerSelect').value : null;
+    const rounds = el('roundsSelect') ? el('roundsSelect').value : null;
+    const category = el('categorySelect') ? el('categorySelect').value : null;
+    await api({action:'start_game', room, timer, rounds, category});
     await refreshState();
   }catch(e){
     alert('Kunne ikke starte spil: ' + e.message);

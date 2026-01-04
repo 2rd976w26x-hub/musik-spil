@@ -15,7 +15,7 @@ except Exception:
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.33-github-ready"
+VERSION = "v1.4.34-github-ready"
 rooms = {}
 
 # Simple in-memory statistics (reset on deploy/restart)
@@ -595,6 +595,26 @@ def api():
         room = rooms.get(data.get("room"))
         if not room:
             return jsonify({"error": "room_not_found"}), 400
+
+        # The host can edit settings inside the room UI before starting.
+        # Accept optional overrides here so the selected values are actually used.
+        try:
+            if data.get("timer") is not None:
+                room["timer_seconds"] = max(5, min(120, int(data.get("timer"))))
+        except Exception:
+            pass
+        try:
+            if data.get("rounds") is not None:
+                room["rounds_total"] = max(1, min(100, int(data.get("rounds"))))
+        except Exception:
+            pass
+        if data.get("category"):
+            new_cat = str(data.get("category"))
+            if new_cat in SONGSETS:
+                if room.get("category") != new_cat:
+                    room["category"] = new_cat
+                    # Reset pool so we pick from the new category.
+                    room["unused_songs"] = []
         if not room["unused_songs"]:
             room["unused_songs"] = get_songs_for_category(room.get("category")).copy()
 
@@ -743,19 +763,25 @@ def api():
             if not room.get("_completed_counted"):
                 room["_completed_counted"] = True
                 STATS["games_completed"] += 1
-                DB.bump_daily("games_completed")
+                try:
+                    DB.bump_daily("games_completed")
+                except Exception as e:
+                    print("DB.bump_daily failed:", e)
                 # Persist finished game (best-effort)
                 room["game_ended_at"] = now()
-                DB.save_game(
-                    game_id=room.get("game_id") or str(uuid.uuid4()),
-                    room_code=room.get("room_code"),
-                    started_at=room.get("game_started_at"),
-                    ended_at=room.get("game_ended_at"),
-                    category=room.get("category"),
-                    rounds_total=room.get("rounds_total"),
-                    players=room.get("players"),
-                    history=room.get("history"),
-                )
+                try:
+                    DB.save_game(
+                        game_id=room.get("game_id") or str(uuid.uuid4()),
+                        room_code=room.get("room_code"),
+                        started_at=room.get("game_started_at"),
+                        ended_at=room.get("game_ended_at"),
+                        category=room.get("category"),
+                        rounds_total=room.get("rounds_total"),
+                        players=room.get("players"),
+                        history=room.get("history"),
+                    )
+                except Exception as e:
+                    print("DB.save_game failed:", e)
             return jsonify({"ok": True})
 
         if not room["unused_songs"]:

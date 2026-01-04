@@ -2,10 +2,20 @@ from flask import Flask, request, jsonify, send_from_directory
 import random, string, time, json
 from copy import deepcopy
 import os
+import hashlib
+from typing import Optional
+import uuid
+
+# Optional Postgres persistence (game runs fine without it)
+try:
+    import psycopg2
+    import psycopg2.extras
+except Exception:
+    psycopg2 = None
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.28-github-ready"
+VERSION = "v1.4.29-github-ready"
 rooms = {}
 
 # Simple in-memory statistics (reset on deploy/restart)
@@ -14,6 +24,221 @@ STATS = {
     "rooms_created": 0,
     "games_completed": 0,
 }
+
+# -----------------------------
+# Persistence (optional)
+# -----------------------------
+
+DB_URL = os.getenv("DATABASE_URL") or os.getenv("INTERNAL_DATABASE_URL")
+DB_DISABLED = os.getenv("DISABLE_DB", "").strip().lower() in {"1", "true", "yes"}
+DB_AVAILABLE = bool(DB_URL) and not DB_DISABLED and psycopg2 is not None
+
+def _hash_device(device_id: str) -> str:
+    """Store only a one-way hash of device id in the database (privacy)."""
+    if not device_id:
+        return ""
+    return hashlib.sha256(device_id.encode("utf-8")).hexdigest()
+
+
+class Db:
+    def __init__(self, url: Optional[str]):
+        self.url = url
+
+    def enabled(self) -> bool:
+        return bool(self.url) and not DB_DISABLED and psycopg2 is not None
+
+    def conn(self):
+        # short connections are OK for Render Postgres; keep it simple
+        return psycopg2.connect(self.url, sslmode=os.getenv("PGSSLMODE", "prefer"))
+
+    def init(self):
+        if not self.enabled():
+            return
+        with self.conn() as c:
+            with c.cursor() as cur:
+                cur.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS daily_metrics (
+                        day DATE PRIMARY KEY,
+                        visits INTEGER NOT NULL DEFAULT 0,
+                        rooms_created INTEGER NOT NULL DEFAULT 0,
+                        games_completed INTEGER NOT NULL DEFAULT 0
+                    );
+                    """
+                )
+                cur.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS devices (
+                        device_hash TEXT PRIMARY KEY,
+                        first_seen TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                    );
+                    """
+                )
+                cur.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS game_history (
+                        id TEXT PRIMARY KEY,
+                        room_code TEXT,
+                        started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                        ended_at TIMESTAMPTZ,
+                        category TEXT,
+                        rounds_total INTEGER,
+                        players JSONB,
+                        history JSONB
+                    );
+                    """
+                )
+            c.commit()
+
+    def inc_metric(self, field: str, amount: int = 1):
+        if not self.enabled():
+            return
+        if field not in {"visits", "rooms_created", "games_completed"}:
+            return
+        with self.conn() as c:
+            with c.cursor() as cur:
+                cur.execute(
+                    f"""
+                    INSERT INTO daily_metrics (day, {field})
+                    VALUES (CURRENT_DATE, %s)
+                    ON CONFLICT (day) DO UPDATE
+                    SET {field} = daily_metrics.{field} + EXCLUDED.{field};
+                    """,
+                    (amount,),
+                )
+            c.commit()
+
+    def upsert_device(self, device_id: str) -> bool:
+        """Return True if it's the first time we've seen this device (in DB)."""
+        if not self.enabled():
+            return False
+        h = _hash_device(device_id)
+        if not h:
+            return False
+        with self.conn() as c:
+            with c.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO devices (device_hash)
+                    VALUES (%s)
+                    ON CONFLICT DO NOTHING;
+                    """,
+                    (h,),
+                )
+                inserted = cur.rowcount == 1
+            c.commit()
+        return inserted
+
+    def save_game_end(self, game_id: str, room_code: str, room_obj: dict):
+        if not self.enabled():
+            return
+        # Keep history compact but useful
+        payload_players = room_obj.get("players")
+        payload_hist = room_obj.get("history")
+        category = room_obj.get("category")
+        rounds_total = room_obj.get("rounds")
+        started_at = room_obj.get("created_at")
+        ended_at = now()
+        # created_at is epoch seconds; convert in SQL
+        with self.conn() as c:
+            with c.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO game_history (id, room_code, started_at, ended_at, category, rounds_total, players, history)
+                    VALUES (%s, %s, to_timestamp(%s), to_timestamp(%s), %s, %s, %s::jsonb, %s::jsonb)
+                    ON CONFLICT (id) DO UPDATE
+                    SET ended_at = EXCLUDED.ended_at,
+                        category = EXCLUDED.category,
+                        rounds_total = EXCLUDED.rounds_total,
+                        players = EXCLUDED.players,
+                        history = EXCLUDED.history;
+                    """,
+                    (
+                        game_id,
+                        room_code,
+                        float(started_at or now()),
+                        float(ended_at),
+                        category,
+                        int(rounds_total or 0),
+                        json.dumps(payload_players or {}),
+                        json.dumps(payload_hist or []),
+                    ),
+                )
+            c.commit()
+
+    def admin_summary(self, days: int = 30) -> dict:
+        if not self.enabled():
+            return {}
+        with self.conn() as c:
+            with c.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                cur.execute(
+                    """
+                    SELECT day, visits, rooms_created, games_completed
+                    FROM daily_metrics
+                    WHERE day >= CURRENT_DATE - %s::int
+                    ORDER BY day;
+                    """,
+                    (days,),
+                )
+                series = list(cur.fetchall())
+                cur.execute("SELECT COUNT(*) AS unique_devices FROM devices;")
+                unique_devices = cur.fetchone()["unique_devices"]
+                cur.execute(
+                    """
+                    SELECT COUNT(*) AS games_total,
+                           COUNT(*) FILTER (WHERE ended_at IS NOT NULL) AS games_finished
+                    FROM game_history;
+                    """
+                )
+                games_meta = cur.fetchone()
+            return {
+                "series": series,
+                "unique_devices": int(unique_devices or 0),
+                "games_total": int(games_meta.get("games_total") or 0),
+                "games_finished": int(games_meta.get("games_finished") or 0),
+            }
+
+    def list_games(self, limit: int = 50) -> list:
+        if not self.enabled():
+            return []
+        limit = max(1, min(int(limit or 50), 200))
+        with self.conn() as c:
+            with c.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                cur.execute(
+                    """
+                    SELECT id, room_code, started_at, ended_at, category, rounds_total
+                    FROM game_history
+                    ORDER BY started_at DESC
+                    LIMIT %s;
+                    """,
+                    (limit,),
+                )
+                return list(cur.fetchall())
+
+    def get_game(self, game_id: str) -> Optional[dict]:
+        if not self.enabled():
+            return None
+        with self.conn() as c:
+            with c.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                cur.execute(
+                    """
+                    SELECT id, room_code, started_at, ended_at, category, rounds_total, players, history
+                    FROM game_history
+                    WHERE id = %s;
+                    """,
+                    (game_id,),
+                )
+                row = cur.fetchone()
+                return dict(row) if row else None
+
+
+DB = Db(DB_URL if DB_AVAILABLE else None)
+try:
+    DB.init()
+except Exception as e:
+    # If DB is misconfigured, keep the game running on in-memory mode.
+    DB = Db(None)
+
 
 def gen_code(n=4):
     return "".join(random.choices(string.ascii_uppercase, k=n))
@@ -160,6 +385,8 @@ def end_round_if_needed(room):
 
 @app.route("/")
 def index():
+    STATS["visits"] += 1
+    DB.bump_daily("visits")
     return send_from_directory("web", "index.html")
 
 @app.route("/<path:path>")
@@ -176,6 +403,9 @@ def api():
     device_id = (data.get("device_id") or "").strip()[:64]
     if device_id:
         STATS["unique_devices"].add(device_id)
+        # Store a one-way hash in the DB (no raw device_id persisted)
+        device_hash = hashlib.sha256(device_id.encode("utf-8")).hexdigest()[:32]
+        DB.register_device(device_hash)
 
     if action == "version":
         return jsonify({"version": VERSION})
@@ -192,7 +422,9 @@ def api():
         room = gen_code()
         pid = gen_id()
         STATS["rooms_created"] += 1
+        DB.bump_daily("rooms_created")
         rooms[room] = {
+            "game_id": str(uuid.uuid4()),
             "room_code": room,
             "players": [{"id": pid, "name": data.get("name","") or "Spiller", "device_id": device_id or None}],
             "host_id": pid,
@@ -211,7 +443,9 @@ def api():
             "round_started_at": None,
             "status": "lobby",
             "created_at": int(time.time()),
-            "completed_counted": False
+            "completed_counted": False,
+            "game_started_at": None,
+            "game_ended_at": None
         }
         return jsonify({"room": room, "player": {"id": pid}})
 
@@ -258,6 +492,21 @@ def api():
         room["history"] = []
         room["round_started_at"] = None
         room["current_song"] = room["unused_songs"].pop(random.randrange(len(room["unused_songs"])))
+
+        # persist game start (optional)
+        if not room.get("game_id"):
+            room["game_id"] = str(uuid.uuid4())
+        room["game_started_at"] = now()
+        DB.save_game(
+            game_id=room["game_id"],
+            room_code=room.get("room_code") or data.get("room"),
+            category=room.get("category"),
+            rounds_total=int(room.get("rounds") or 0),
+            players=room.get("players") or [],
+            history=room.get("history") or [],
+            started_at=room["game_started_at"],
+            ended_at=None,
+        )
         return jsonify({"ok": True})
 
     if action == "start_timer":
@@ -374,6 +623,19 @@ def api():
             if not room.get("_completed_counted"):
                 room["_completed_counted"] = True
                 STATS["games_completed"] += 1
+                DB.bump_daily("games_completed")
+                # Persist finished game (best-effort)
+                room["game_ended_at"] = now()
+                DB.save_game(
+                    game_id=room.get("game_id") or str(uuid.uuid4()),
+                    room_code=room.get("room_code"),
+                    started_at=room.get("game_started_at"),
+                    ended_at=room.get("game_ended_at"),
+                    category=room.get("category"),
+                    rounds_total=room.get("rounds_total"),
+                    players=room.get("players"),
+                    history=room.get("history"),
+                )
             return jsonify({"ok": True})
 
         if not room["unused_songs"]:
@@ -469,7 +731,7 @@ def api():
 
 @app.route("/stats")
 def stats():
-    # Note: all of this is in-memory, resets on deploy/restart.
+    # In-memory "live" state + optional persisted aggregates.
     active_rooms = []
     for code, r in rooms.items():
         active_rooms.append({
@@ -484,17 +746,19 @@ def stats():
 
     return jsonify({
         "version": VERSION,
+        "db_enabled": DB.enabled,
         "unique_devices": len(STATS["unique_devices"]),
         "rooms_created": STATS["rooms_created"],
         "games_completed": STATS["games_completed"],
         "active_rooms": active_rooms,
         "active_rooms_count": len(active_rooms),
+        "daily": DB.daily_metrics(days=30) if DB.enabled else [],
     })
 
 
 @app.route("/admin")
 def admin_page():
-    # Simple built-in dashboard (no auth) — handy for quick checks.
+    # Built-in dashboard (no auth). Uses Postgres if available; otherwise falls back to in-memory.
     return """<!doctype html>
 <html lang=\"da\">
 <head>
@@ -503,46 +767,92 @@ def admin_page():
   <title>Piratwhist — Admin</title>
   <style>
     body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:18px;}
-    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:12px 0 18px;}
-    .card{border:1px solid #e5e7eb;border-radius:12px;padding:12px;}
-    table{border-collapse:collapse;width:100%;}
-    th,td{border-bottom:1px solid #eee;padding:8px;text-align:left;}
-    th{font-size:12px;opacity:.8;}
+    h1{margin:0 0 6px;}
     .muted{opacity:.7;font-size:12px;}
+    .row{display:flex;gap:12px;flex-wrap:wrap;}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:12px 0 14px;}
+    .card{border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fff;}
+    .kpi{font-size:22px;font-weight:700;}
+    .tag{display:inline-block;border:1px solid #e5e7eb;border-radius:999px;padding:2px 8px;font-size:12px;opacity:.85;}
+    table{border-collapse:collapse;width:100%;}
+    th,td{border-bottom:1px solid #eee;padding:8px;text-align:left;vertical-align:top;}
+    th{font-size:12px;opacity:.8;}
+    a{color:inherit;}
+    .chart{height:140px;}
   </style>
 </head>
 <body>
   <h1>Piratwhist — Admin</h1>
-  <div class=\"muted\">In-memory stats (nulstilles ved deploy/restart). Opdaterer hvert 2. sekund.</div>
+  <div class=\"muted\">Live (aktive rooms) + historik (spil pr. dag osv.) hvis DB er slået til.</div>
 
   <div class=\"cards\">
-    <div class=\"card\"><div class=\"muted\">Version</div><div id=\"v\">…</div></div>
-    <div class=\"card\"><div class=\"muted\">Unikke enheder</div><div id=\"u\">…</div></div>
-    <div class=\"card\"><div class=\"muted\">Rooms oprettet</div><div id=\"rc\">…</div></div>
-    <div class=\"card\"><div class=\"muted\">Spil gennemført</div><div id=\"gc\">…</div></div>
-    <div class=\"card\"><div class=\"muted\">Aktive rooms</div><div id=\"ar\">…</div></div>
+    <div class=\"card\"><div class=\"muted\">Version</div><div class=\"kpi\" id=\"v\">…</div></div>
+    <div class=\"card\"><div class=\"muted\">DB</div><div class=\"kpi\" id=\"db\">…</div></div>
+    <div class=\"card\"><div class=\"muted\">Unikke enheder (live)</div><div class=\"kpi\" id=\"u\">…</div></div>
+    <div class=\"card\"><div class=\"muted\">Aktive rooms</div><div class=\"kpi\" id=\"ar\">…</div></div>
+    <div class=\"card\"><div class=\"muted\">Spil gennemført (live)</div><div class=\"kpi\" id=\"gc\">…</div></div>
   </div>
 
-  <h2>Aktive rooms</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Room</th><th>Spillere</th><th>Status</th><th>Runde</th><th>Kategori</th><th>DJ</th>
-      </tr>
-    </thead>
-    <tbody id=\"rooms\"></tbody>
+  <div class=\"row\">
+    <div class=\"card\" style=\"flex:1;min-width:320px;\">
+      <div style=\"display:flex;justify-content:space-between;align-items:center;gap:8px\">
+        <div>
+          <div class=\"muted\">Spil pr. dag (30 dage)</div>
+          <div id=\"chartHint\" class=\"muted\"></div>
+        </div>
+        <span class=\"tag\" id=\"chartTag\">…</span>
+      </div>
+      <svg id=\"chart\" class=\"chart\" viewBox=\"0 0 600 140\" preserveAspectRatio=\"none\"></svg>
+    </div>
+    <div class=\"card\" style=\"flex:1;min-width:320px;\">
+      <div class=\"muted\">Rooms (aktive)</div>
+      <table>
+        <thead><tr><th>Room</th><th>Spillere</th><th>Status</th><th>Runde</th><th>Kategori</th><th>DJ</th></tr></thead>
+        <tbody id=\"rooms\"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <h2 style=\"margin-top:18px\">Seneste spil</h2>
+  <div class=\"muted\">Klik et spil for at se historik (kun når DB er slået til).</div>
+  <table style=\"margin-top:8px\">
+    <thead><tr><th>Start</th><th>Room</th><th>Kategori</th><th>Runder</th><th>Spillere</th></tr></thead>
+    <tbody id=\"games\"></tbody>
   </table>
 
 <script>
+function svgBarChart(svg, series){
+  // series: [{label, value}]
+  const w = 600, h = 140;
+  const maxV = Math.max(1, ...series.map(s=>s.value));
+  const pad = 6;
+  const bw = (w - pad*2) / Math.max(1, series.length);
+  let out = '';
+  series.forEach((s,i)=>{
+    const bh = Math.round((s.value/maxV) * (h-18));
+    const x = pad + i*bw + 1;
+    const y = h - bh - 12;
+    const rw = Math.max(2, bw-2);
+    out += `<rect x='${x}' y='${y}' width='${rw}' height='${bh}' rx='2' ry='2' fill='#111827' opacity='0.85'>`;
+    out += `<title>${s.label}: ${s.value}</title></rect>`;
+  });
+  // baseline
+  out += `<rect x='${pad}' y='${h-12}' width='${w-pad*2}' height='1' fill='#e5e7eb' />`;
+  svg.innerHTML = out;
+}
+
 async function tick(){
-  const r = await fetch('/stats',{cache:'no-store'});
+  const r = await fetch('/admin/api/summary',{cache:'no-store'});
   const s = await r.json();
   document.getElementById('v').textContent = s.version;
-  document.getElementById('u').textContent = s.unique_devices;
-  document.getElementById('rc').textContent = s.rooms_created;
-  document.getElementById('gc').textContent = s.games_completed;
+  document.getElementById('db').textContent = s.db_enabled ? 'ON' : 'OFF';
+  document.getElementById('u').textContent = s.unique_devices_live;
   document.getElementById('ar').textContent = s.active_rooms_count;
+  document.getElementById('gc').textContent = s.games_completed_live;
+  document.getElementById('chartTag').textContent = s.db_enabled ? 'Persistens' : 'Ingen DB';
+  document.getElementById('chartHint').textContent = s.db_enabled ? 'Baseret på Postgres' : 'DB er slået fra — vises som 0';
 
+  // Active rooms table
   const tbody = document.getElementById('rooms');
   tbody.innerHTML = '';
   for(const room of (s.active_rooms||[])){
@@ -551,9 +861,110 @@ async function tick(){
     tr.innerHTML = `<td>${room.room}</td><td>${room.players}</td><td>${room.status||''}</td><td>${roundTxt}</td><td>${room.category||''}</td><td>${room.dj_mode?'ja':''}</td>`;
     tbody.appendChild(tr);
   }
+
+  // Chart
+  const series = (s.daily||[]).map(d=>({label:d.day, value:d.games_completed||0}));
+  svgBarChart(document.getElementById('chart'), series);
 }
+
+async function loadGames(){
+  const r = await fetch('/admin/api/games?limit=30',{cache:'no-store'});
+  const s = await r.json();
+  const tbody = document.getElementById('games');
+  tbody.innerHTML = '';
+  for(const g of (s.games||[])){
+    const tr = document.createElement('tr');
+    const players = (g.players||[]).join(', ');
+    const href = g.id ? `/admin/game/${g.id}` : '#';
+    tr.innerHTML = `<td><a href='${href}'>${g.started_at||''}</a></td><td>${g.room_code||''}</td><td>${g.category||''}</td><td>${g.rounds_total||''}</td><td>${players}</td>`;
+    tbody.appendChild(tr);
+  }
+}
+
 tick();
-setInterval(tick, 2000);
+loadGames();
+setInterval(tick, 5000);
+setInterval(loadGames, 15000);
 </script>
+</body>
+</html>"""
+
+
+@app.route("/admin/api/summary")
+def admin_api_summary():
+    # Live state
+    active = []
+    for rc, room in rooms.items():
+        active.append({
+            "room": rc,
+            "players": len(room.get("players", [])),
+            "status": room.get("status", ""),
+            "current_round": room.get("round_index", 0) if room.get("started") else 0,
+            "rounds_total": room.get("rounds_total", 0),
+            "category": room.get("category", ""),
+            "dj_mode": bool(room.get("dj_mode")),
+        })
+
+    daily = DB.daily_metrics(30)
+    return jsonify({
+        "version": VERSION,
+        "db_enabled": DB.enabled,
+        "unique_devices_live": len(STATS["unique_devices"]),
+        "games_completed_live": STATS["games_completed"],
+        "active_rooms_count": len(rooms),
+        "active_rooms": active,
+        "daily": daily,
+    })
+
+
+@app.route("/admin/api/games")
+def admin_api_games():
+    limit = int(request.args.get("limit", "30") or 30)
+    limit = max(1, min(200, limit))
+    if not DB.enabled:
+        return jsonify({"games": []})
+    return jsonify({"games": DB.recent_games(limit=limit)})
+
+
+@app.route("/admin/game/<game_id>")
+def admin_game_detail(game_id: str):
+    if not DB.enabled:
+        return "DB er ikke slået til (ingen historik).", 400
+    g = DB.game_by_id(game_id)
+    if not g:
+        return "Spil ikke fundet.", 404
+    history = g.get("history") or []
+    # Simple HTML rendering
+    items = "".join(
+        f"<tr><td>{h.get('ts','')}</td><td>{h.get('event','')}</td><td>{json.dumps(h, ensure_ascii=False)}</td></tr>"
+        for h in history
+    )
+    players = ", ".join(g.get("players") or [])
+    return f"""<!doctype html>
+<html lang='da'>
+<head>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='width=device-width,initial-scale=1' />
+  <title>Spil {game_id} — Piratwhist Admin</title>
+  <style>
+    body{{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:18px;}}
+    .muted{{opacity:.7;font-size:12px;}}
+    table{{border-collapse:collapse;width:100%;margin-top:12px;}}
+    th,td{{border-bottom:1px solid #eee;padding:8px;text-align:left;vertical-align:top;}}
+    th{{font-size:12px;opacity:.8;}}
+    code{{background:#f3f4f6;padding:2px 6px;border-radius:6px;}}
+  </style>
+</head>
+<body>
+  <p><a href='/admin'>&larr; tilbage</a></p>
+  <h1>Spil <code>{game_id}</code></h1>
+  <div class='muted'>Room: {g.get('room_code','')} • Kategori: {g.get('category','')} • Runder: {g.get('rounds_total','')} • Spillere: {players}</div>
+  <div class='muted'>Start: {g.get('started_at','')} • Slut: {g.get('ended_at','')}</div>
+
+  <h2>Historik</h2>
+  <table>
+    <thead><tr><th>Tid</th><th>Event</th><th>Data</th></tr></thead>
+    <tbody>{items}</tbody>
+  </table>
 </body>
 </html>"""

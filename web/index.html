@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Musik Spil</title>
-  <link rel="stylesheet" href="styles.css?v=1.4.32">
+  <link rel="stylesheet" href="styles.css?v=1.4.33">
 </head>
 <body>
   <div class="appShell">
@@ -47,20 +47,12 @@
 
             <div id="hostControls" class="hidden">
               <div class="row">
-                <label>Gættetid:
-                  <select id="timerSelect" class="select">
-                    <option value="15">15 sek</option>
-                    <option value="20" selected>20 sek</option>
-                    <option value="30">30 sek</option>
-                  </select>
+                <label>Gættetid (sek):
+                  <input id="timerSelect" class="select" type="number" inputmode="numeric" min="5" max="999" step="1" value="20">
                 </label>
 
                 <label>Runder:
-                  <select id="roundsSelect" class="select">
-                    <option value="5">5</option>
-                    <option value="10" selected>10</option>
-                    <option value="20">20</option>
-                  </select>
+                  <input id="roundsSelect" class="select" type="number" inputmode="numeric" min="1" max="999" step="1" value="10">
                 </label>
 
                 <label>Kategori:
@@ -170,6 +162,6 @@
     <footer class="footer">Tip: Installer som app (PWA) via Del → “Føj til hjemmeskærm”.</footer>
   </div>
 
-  <script src="client.js?v=1.4.32"></script>
+  <script src="client.js?v=1.4.33"></script>
 </body>
 </html>

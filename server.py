@@ -15,7 +15,7 @@ except Exception:
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.32-github-ready"
+VERSION = "v1.4.33-github-ready"
 rooms = {}
 
 # Simple in-memory statistics (reset on deploy/restart)
@@ -613,12 +613,15 @@ def api():
             room["game_id"] = str(uuid.uuid4())
         room["game_started_at"] = now()
         try:
+            # `room_code` is the room identifier sent by the client.
+            room_code = data.get("room")
             DB.save_game(
                 room.get("game_id") or gen_game_id(),
                 room_code,
                 room.get("category", ""),
                 room.get("rounds_total", 0),
-                room.get("guess_seconds", 0),
+                # Room setting is stored as `timer_seconds`.
+                room.get("timer_seconds", 0),
                 room.get("players", {}),
                 room.get("history", []),
             )
@@ -881,7 +884,7 @@ def admin_page():
 <head>
   <meta charset=\"utf-8\" />
   <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\" />
-  <title>Piratwhist — Admin</title>
+  <title>Musik spil — Admin</title>
   <style>
     body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:18px;}
     h1{margin:0 0 6px;}
@@ -899,7 +902,7 @@ def admin_page():
   </style>
 </head>
 <body>
-  <h1>Piratwhist — Admin</h1>
+  <h1>Musik spil — Admin</h1>
   <div class=\"muted\">Live (aktive rooms) + historik (spil pr. dag osv.) hvis DB er slået til.</div>
 
   <div class=\"cards\">
@@ -1062,7 +1065,7 @@ def admin_game_detail(game_id: str):
 <head>
   <meta charset='utf-8' />
   <meta name='viewport' content='width=device-width,initial-scale=1' />
-  <title>Spil {game_id} — Piratwhist Admin</title>
+  <title>Spil {game_id} — Musik spil Admin</title>
   <style>
     body{{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:18px;}}
     .muted{{opacity:.7;font-size:12px;}}

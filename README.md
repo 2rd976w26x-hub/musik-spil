@@ -1,8 +1,8 @@
-# Musik Spil (v1.4.25)
+# Musik Spil (v1.4.26)
 
 Denne ZIP er **baseret direkte på `musik-spil-v1.4.7-github-ready.zip`** (den stabile version).
 
-## Hvad er nyt i v1.4.25
+## Hvad er nyt i v1.4.26
 
 - Vælger nu sange *random* inden for den valgte kategori.
   - Hvis der kun findes én sangliste (Standard), auto-genererer spillet årti-kategorier (fx 1990, 2000) ud fra sangenes årstal.

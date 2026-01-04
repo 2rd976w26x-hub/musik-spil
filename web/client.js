@@ -133,6 +133,8 @@ function render(){
   if(!state){
     renderLiveScore(null);
     show('view-lobby');
+    // Reset lobby UI when leaving a room
+    renderLobby();
     const lb = document.getElementById('leaveRoomBtn');
     if(lb) lb.classList.add('hidden');
     return;
@@ -199,11 +201,21 @@ function escapeHtml(str){
 }
 
 function renderLobby(){
-  if(!state){ return; }
-  // Hide room-only controls in lobby until a room exists
+  // Room-only lobby section (should be hidden unless you're in a room)
   const roomOnly = document.getElementById('lobbyRoomOnly');
-  if(roomOnly){ roomOnly.classList.toggle('hidden', !room); }
   const ul = el('lobbyPlayers');
+
+  if(!state){
+    // Not in a room: keep lobby clean
+    if(roomOnly) roomOnly.classList.add('hidden');
+    if(ul) ul.innerHTML = '';
+    const hc = el('hostControls');
+    if(hc) hc.classList.add('hidden');
+    return;
+  }
+
+  // Hide room-only controls in lobby until a room exists
+  if(roomOnly){ roomOnly.classList.toggle('hidden', !room); }
   ul.innerHTML = '';
   (state.players||[]).forEach(p=>{
     const li=document.createElement('li');

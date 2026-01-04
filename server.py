@@ -15,11 +15,12 @@ except Exception:
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.29-github-ready"
+VERSION = "v1.4.30-github-ready"
 rooms = {}
 
 # Simple in-memory statistics (reset on deploy/restart)
 STATS = {
+    "visits": 0,
     "unique_devices": set(),   # device_id values we've seen
     "rooms_created": 0,
     "games_completed": 0,
@@ -44,15 +45,20 @@ class Db:
     def __init__(self, url: Optional[str]):
         self.url = url
 
-    def enabled(self) -> bool:
+    def is_enabled(self) -> bool:
         return bool(self.url) and not DB_DISABLED and psycopg2 is not None
+
+
+    @property
+    def enabled(self):
+        return self.is_enabled()
 
     def conn(self):
         # short connections are OK for Render Postgres; keep it simple
         return psycopg2.connect(self.url, sslmode=os.getenv("PGSSLMODE", "prefer"))
 
     def init(self):
-        if not self.enabled():
+        if not self.is_enabled():
             return
         with self.conn() as c:
             with c.cursor() as cur:
@@ -91,7 +97,7 @@ class Db:
             c.commit()
 
     def inc_metric(self, field: str, amount: int = 1):
-        if not self.enabled():
+        if not self.is_enabled():
             return
         if field not in {"visits", "rooms_created", "games_completed"}:
             return
@@ -110,7 +116,7 @@ class Db:
 
     def upsert_device(self, device_id: str) -> bool:
         """Return True if it's the first time we've seen this device (in DB)."""
-        if not self.enabled():
+        if not self.is_enabled():
             return False
         h = _hash_device(device_id)
         if not h:
@@ -130,7 +136,7 @@ class Db:
         return inserted
 
     def save_game_end(self, game_id: str, room_code: str, room_obj: dict):
-        if not self.enabled():
+        if not self.is_enabled():
             return
         # Keep history compact but useful
         payload_players = room_obj.get("players")
@@ -167,7 +173,7 @@ class Db:
             c.commit()
 
     def admin_summary(self, days: int = 30) -> dict:
-        if not self.enabled():
+        if not self.is_enabled():
             return {}
         with self.conn() as c:
             with c.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -199,7 +205,7 @@ class Db:
             }
 
     def list_games(self, limit: int = 50) -> list:
-        if not self.enabled():
+        if not self.is_enabled():
             return []
         limit = max(1, min(int(limit or 50), 200))
         with self.conn() as c:
@@ -216,7 +222,7 @@ class Db:
                 return list(cur.fetchall())
 
     def get_game(self, game_id: str) -> Optional[dict]:
-        if not self.enabled():
+        if not self.is_enabled():
             return None
         with self.conn() as c:
             with c.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -231,6 +237,30 @@ class Db:
                 row = cur.fetchone()
                 return dict(row) if row else None
 
+    def bump_daily(self, field: str, amount: int = 1):
+        """Compatibility alias used by older code."""
+        return self.inc_metric(field, amount)
+    def register_device(self, device_id: str):
+        """Compatibility alias used by older code."""
+        return self.upsert_device(device_id)
+    def daily_metrics(self, days: int = 30):
+        """Return daily series for the last N days."""
+        try:
+            return self.admin_summary(days=days).get("series", [])
+        except Exception:
+            return []
+    def recent_games(self, limit: int = 200):
+        """Return recent finished games."""
+        try:
+            return self.list_games(limit=limit)
+        except Exception:
+            return []
+    def game_details(self, game_id: int):
+        """Return stored game record."""
+        try:
+            return self.get_game(game_id)
+        except Exception:
+            return None
 
 DB = Db(DB_URL if DB_AVAILABLE else None)
 try:

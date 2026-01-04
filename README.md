@@ -1,8 +1,8 @@
-# Musik Spil (v1.4.29)
+# Musik Spil (v1.4.30)
 
 Denne ZIP er **baseret direkte på `musik-spil-v1.4.7-github-ready.zip`** (den stabile version).
 
-## Hvad er nyt i v1.4.29
+## Hvad er nyt i v1.4.30
 
 - **Valgfri Postgres-persistens** for statistik (spillet kører stadig fint uden database).
 - **Udbygget admin-dashboard**: grafer for besøg/rum/spil pr. dag + liste over seneste spil.

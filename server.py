@@ -15,7 +15,7 @@ except Exception:
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.34-github-ready"
+VERSION = "v1.4.35-github-ready"
 rooms = {}
 
 # Simple in-memory statistics (reset on deploy/restart)

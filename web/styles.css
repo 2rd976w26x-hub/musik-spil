@@ -229,6 +229,13 @@ li{margin:6px 0}
 
 .roomTopRow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:10px 0 14px 0}
 
+/* Mobile: ensure room header + buttons don't get squeezed/hidden (iPhone portrait) */
+@media (max-width:520px){
+  .roomTopRow{flex-direction:column;align-items:stretch;justify-content:flex-start}
+  .roomTopRow .pill{width:100%;justify-content:center}
+  .roomTopRow .btn{width:100%}
+}
+
 #versionText{opacity:.9}
 
 .btn.disabled, .btn:disabled{opacity:.55;cursor:not-allowed}

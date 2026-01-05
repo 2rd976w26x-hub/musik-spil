@@ -1,8 +1,10 @@
-# Musik Spil (v1.4.36)
+# Musik Spil (v1.4.37)
 
 Denne ZIP er **baseret direkte på `musik-spil-v1.4.7-github-ready.zip`** (den stabile version).
 
-## Hvad er nyt i v1.4.36
+## Hvad er nyt i v1.4.37
+
+- Fix: Seneste spil i admin bliver nu gemt og vist korrekt i Postgres (game_history ended_at + korrekt schema).
 
 - Fairness: Når spillet startes, rundes antal runder op så det går op i antal spillere (så alle får lige mange gæt).
 - UI: Viser hvor mange runder der er tilbage.

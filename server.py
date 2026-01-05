@@ -15,7 +15,7 @@ except Exception:
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.36-github-ready"
+VERSION = "v1.4.37-github-ready"
 rooms = {}
 
 # Simple in-memory statistics (reset on deploy/restart)
@@ -253,29 +253,18 @@ class Db:
         guessed_seconds: int,
         players: list,
         history: list,
-        ended: bool = False,
+        ended: bool = True,
     ) -> None:
-        """Upsert game row. If ended=True, delegates to save_game_end.
+        """Persist a finished game (admin history).
 
-        This keeps the game playable even when DB is optional and ensures the
-        admin history views have a row to read later.
+        The admin "Seneste spil" list only shows games where ended_at is set.
+        We therefore always write ended_at when this function is called.
         """
         if not self.enabled:
             return
-        if ended:
-            # ensure a row exists, then update ended fields
-            self._upsert_game_row(
-                game_id,
-                room_code=room_code,
-                category=category,
-                rounds_total=rounds_total,
-                guessed_seconds=guessed_seconds,
-                players=players,
-                history=history,
-            )
-            self.save_game_end(game_id, players=players, history=history)
-            return
 
+        # For compatibility with earlier experiments we keep the "ended" kwarg,
+        # but the current server code calls save_game when the game is done.
         self._upsert_game_row(
             game_id,
             room_code=room_code,
@@ -284,6 +273,7 @@ class Db:
             guessed_seconds=guessed_seconds,
             players=players,
             history=history,
+            ended=bool(ended),
         )
 
     def _upsert_game_row(
@@ -296,22 +286,29 @@ class Db:
         guessed_seconds: int,
         players: list,
         history: list,
+        ended: bool,
     ) -> None:
-        """Internal helper to insert/update the main game row."""
-        import json
-        with self._conn() as c:
+        """Internal helper to insert/update the main game row.
+
+        IMPORTANT: must match the schema created in _ensure_schema().
+        """
+        from psycopg2.extras import Json
+
+        ended_at_sql = "NOW()" if ended else "NULL"
+        with self.conn() as c:
             c.execute(
-                """
+                f"""
                 INSERT INTO game_history (
-                    game_id, room_code, category, rounds_total, guessed_seconds, players_json, history_json
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s)
-                ON CONFLICT (game_id) DO UPDATE SET
+                    id, room_code, category, rounds_total, guessed_seconds, players, history, started_at, ended_at
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, NOW(), {ended_at_sql})
+                ON CONFLICT (id) DO UPDATE SET
                     room_code = EXCLUDED.room_code,
                     category = EXCLUDED.category,
                     rounds_total = EXCLUDED.rounds_total,
                     guessed_seconds = EXCLUDED.guessed_seconds,
-                    players_json = EXCLUDED.players_json,
-                    history_json = EXCLUDED.history_json
+                    players = EXCLUDED.players,
+                    history = EXCLUDED.history,
+                    ended_at = COALESCE(game_history.ended_at, EXCLUDED.ended_at)
                 """,
                 (
                     game_id,
@@ -319,8 +316,8 @@ class Db:
                     category,
                     int(rounds_total),
                     int(guessed_seconds),
-                    json.dumps(players or []),
-                    json.dumps(history or []),
+                    Json(players or []),
+                    Json(history or []),
                 ),
             )
 

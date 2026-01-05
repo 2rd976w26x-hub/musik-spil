@@ -259,7 +259,9 @@ function renderRound(){
   const dj = state.players[state.dj_index];
   const isDJ = player && player.id === dj.id;
 
-  el('roundText').innerText = 'Runde ' + (state.round_index+1);
+  const totalRounds = state.rounds_total || 0;
+  const remainingRounds = Math.max(0, totalRounds - (state.round_index || 0));
+  el('roundText').innerText = 'Runde ' + (state.round_index+1) + ' af ' + totalRounds + ' (' + remainingRounds + ' tilbage)';
   el('roleText').innerText = isDJ ? 'Du er DJ' : 'Gæt årstal';
 
   el('djPanel').classList.toggle('hidden', !isDJ);

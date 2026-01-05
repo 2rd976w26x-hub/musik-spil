@@ -15,7 +15,7 @@ except Exception:
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.35-github-ready"
+VERSION = "v1.4.36-github-ready"
 rooms = {}
 
 # Simple in-memory statistics (reset on deploy/restart)
@@ -617,6 +617,27 @@ def api():
                     room["unused_songs"] = []
         if not room["unused_songs"]:
             room["unused_songs"] = get_songs_for_category(room.get("category")).copy()
+
+        # Ensure fairness: total rounds should be divisible by number of players,
+        # so everyone gets the same number of guesses.
+        try:
+            player_count = len(room.get("players") or [])
+        except Exception:
+            player_count = 0
+
+        if player_count > 0:
+            try:
+                desired = int(room.get("rounds_total", 10) or 10)
+            except Exception:
+                desired = 10
+            desired = max(1, min(200, desired))
+            rem = desired % player_count
+            adjusted = desired if rem == 0 else (desired + (player_count - rem))
+            # keep within max bound; if rounding up would exceed max, round down to nearest multiple
+            if adjusted > 200:
+                adjusted = 200 - (200 % player_count)
+                adjusted = max(player_count, adjusted)
+            room["rounds_total"] = adjusted
 
         room["started"] = True
         room["status"] = "round"

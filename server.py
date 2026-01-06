@@ -15,7 +15,7 @@ except Exception:
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.42-github-ready"
+VERSION = "v1.4.43-github-ready"
 rooms = {}
 
 
@@ -1155,7 +1155,17 @@ def admin_game_detail(game_id: str):
         f"<tr><td>{h.get('ts','')}</td><td>{h.get('event','')}</td><td>{json.dumps(h, ensure_ascii=False)}</td></tr>"
         for h in history
     )
-    players = ", ".join(g.get("players") or [])
+    # Players can be stored as list[str] OR list[dict] (e.g. {name: ...}). Normalize for display.
+    _raw_players = g.get("players") or []
+    _player_names = []
+    for p in _raw_players:
+        if p is None:
+            continue
+        if isinstance(p, dict):
+            _player_names.append(str(p.get('name') or p.get('player') or p.get('id') or p.get('uuid') or json.dumps(p, ensure_ascii=False)))
+        else:
+            _player_names.append(str(p))
+    players = ", ".join(_player_names)
     return f"""<!doctype html>
 <html lang='da'>
 <head>

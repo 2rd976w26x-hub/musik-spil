@@ -15,7 +15,7 @@ except Exception:
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.40-github-ready"
+VERSION = "v1.4.41-github-ready"
 rooms = {}
 
 
@@ -216,7 +216,7 @@ class Db:
             with c.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 cur.execute(
                     """
-                    SELECT id, room_code, started_at, ended_at, category, rounds_total
+                    SELECT id, room_code AS room, started_at::text AS started_at, ended_at::text AS ended_at, category, rounds_total, players
                     FROM game_history
                     ORDER BY started_at DESC
                     LIMIT %s;
@@ -1091,7 +1091,7 @@ async function loadGames(){
     const tr = document.createElement('tr');
     const players = (g.players||[]).join(', ');
     const href = g.id ? `/admin/game/${g.id}` : '#';
-    tr.innerHTML = `<td><a href='${href}'>${g.started_at||''}</a></td><td>${g.room_code||''}</td><td>${g.category||''}</td><td>${g.rounds_total||''}</td><td>${players}</td>`;
+    tr.innerHTML = `<td><a href='${href}'>${g.started_at||''}</a></td><td>${g.room||g.room_code||''}</td><td>${g.category||''}</td><td>${g.rounds_total||''}</td><td>${players}</td>`;
     tbody.appendChild(tr);
   }
 }

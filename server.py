@@ -17,7 +17,7 @@ except Exception:
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.44-github-ready"
+VERSION = "v1.4.45-github-ready"
 rooms = {}
 
 
@@ -1092,7 +1092,7 @@ async function loadGames(){
   tbody.innerHTML = '';
   for(const g of (s.games||[])){
     const tr = document.createElement('tr');
-    const players = (g.players||[]).join(', ');
+    const players = (g.players_display || (g.players||[]).map(p => (typeof p === 'string') ? p : (p?.name || p?.player || p?.username || '')).filter(Boolean).join(', '));
     const href = g.id ? `/admin/game/${g.id}` : '#';
     tr.innerHTML = `<td><a href='${href}'>${g.started_at||''}</a></td><td>${g.room||g.room_code||''}</td><td>${g.category||''}</td><td>${g.rounds_total||''}</td><td>${players}</td>`;
     tbody.appendChild(tr);
@@ -1141,8 +1141,37 @@ def admin_api_games():
     limit = max(1, min(200, limit))
     if not DB.enabled:
         return jsonify({"games": []})
-    return jsonify({"games": DB.recent_games(limit=limit)})
 
+    games = DB.recent_games(limit=limit)
+
+    # Normalize players for admin list view:
+    # - DB may store players as list of dicts (e.g. {"name": "..."}), which would render as [object Object] in JS.
+    # - Return both a string list and a ready-to-display string.
+    for g in games:
+        players = g.get("players")
+        names = []
+        if isinstance(players, list):
+            for p in players:
+                if isinstance(p, str):
+                    names.append(p)
+                elif isinstance(p, dict):
+                    n = p.get("name") or p.get("player") or p.get("username") or p.get("display_name") or p.get("id")
+                    if n is not None:
+                        names.append(str(n))
+                elif p is not None:
+                    names.append(str(p))
+        elif isinstance(players, dict):
+            n = players.get("name") or players.get("player") or players.get("username") or players.get("display_name") or players.get("id")
+            if n is not None:
+                names.append(str(n))
+        elif isinstance(players, str) and players.strip():
+            # Already a display string in some older records
+            names = [s.strip() for s in players.split(",") if s.strip()]
+
+        g["players"] = names
+        g["players_display"] = ", ".join([n for n in names if n])
+
+    return jsonify({"games": games})
 
 @app.route("/admin/game/<game_id>")
 def admin_game_detail(game_id: str):

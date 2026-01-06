@@ -1,8 +1,10 @@
-# Musik Spil (v1.4.37)
+# Musik Spil (v1.4.38)
 
 Denne ZIP er **baseret direkte på `musik-spil-v1.4.7-github-ready.zip`** (den stabile version).
 
-## Hvad er nyt i v1.4.37
+## Hvad er nyt i v1.4.38
+
+- Hvis en spiller forlader et rum, kan spilleren logge ind igen med samme navn uden at blive oprettet som en ny spiller (samme id/score genbruges).
 
 - Fix: Seneste spil i admin bliver nu gemt og vist korrekt i Postgres (game_history ended_at + korrekt schema).
 

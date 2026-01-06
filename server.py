@@ -15,8 +15,12 @@ except Exception:
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.37-github-ready"
+VERSION = "v1.4.38-github-ready"
 rooms = {}
+
+
+def _norm_name(name: str) -> str:
+    return (name or "").strip().lower()
 
 # Simple in-memory statistics (reset on deploy/restart)
 STATS = {
@@ -539,6 +543,9 @@ def api():
             "game_id": str(uuid.uuid4()),
             "room_code": room,
             "players": [{"id": pid, "name": data.get("name","") or "Spiller", "device_id": device_id or None}],
+            # Players that have left this room can re-join without being treated as a new player.
+            # Keyed by device_id; values are minimal player info (id/name/device_id/left_at).
+            "left_players": {},
             "host_id": pid,
             "started": False,
             "round_index": 0,
@@ -565,6 +572,10 @@ def api():
         room = rooms.get(data.get("room"))
         if not room:
             return jsonify({"error": "room_not_found"}), 400
+
+        # Ensure newer fields exist for older in-memory rooms.
+        room.setdefault("left_players", {})
+
         # Enforce: only 1 join per device in the same room.
         if device_id:
             for p in room["players"]:
@@ -573,6 +584,27 @@ def api():
                     if data.get("name"):
                         p["name"] = data.get("name","") or p.get("name")
                     return jsonify({"player": {"id": p["id"], "reconnected": True}})
+
+        # If the player previously left, allow re-join without creating a new player.
+        restored = None
+        if room.get("left_players"):
+            if device_id and device_id in room["left_players"]:
+                restored = room["left_players"].pop(device_id, None)
+            else:
+                want = _norm_name(data.get("name", "") or "")
+                if want:
+                    for did, saved in list(room["left_players"].items()):
+                        if _norm_name(saved.get("name", "")) == want:
+                            restored = room["left_players"].pop(did, None)
+                            break
+
+        if restored:
+            pid = restored.get("id") or gen_id()
+            player_name = data.get("name", "") or restored.get("name", "") or "Spiller"
+            room["players"].append({"id": pid, "name": player_name, "device_id": device_id or restored.get("device_id") or None})
+            room.setdefault("scores", {}).setdefault(pid, 0)
+            room.setdefault("guesses", {}).pop(pid, None)
+            return jsonify({"player": {"id": pid, "rejoined": True}})
 
         pid = gen_id()
         room["players"].append({"id": pid, "name": data.get("name","") or "Spiller", "device_id": device_id or None})
@@ -865,9 +897,28 @@ def api():
         if not room:
             return jsonify({"ok": True})
 
+        room.setdefault("left_players", {})
+
+        # Move the player out of the active list, but keep their id/score so they can re-join
+        # without becoming a "new" user.
+        leaving_player = None
+        for p in (room.get("players") or []):
+            if p.get("id") == pid:
+                leaving_player = p
+                break
+
+        if leaving_player:
+            did = leaving_player.get("device_id") or f"pid:{pid}"
+            room["left_players"][did] = {
+                "id": pid,
+                "name": leaving_player.get("name", ""),
+                "device_id": leaving_player.get("device_id"),
+                "left_at": now_ts(),
+            }
+
         room["players"] = [p for p in room.get("players", []) if p.get("id") != pid]
 
-        room.get("scores", {}).pop(pid, None)
+        # Don't remove score – it should persist for a re-join.
         room.get("guesses", {}).pop(pid, None)
         room.get("last_round_points", {}).pop(pid, None)
 

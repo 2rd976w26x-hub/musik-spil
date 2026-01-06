@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory
 import random, string, time, json
+import html
+from datetime import datetime
 from copy import deepcopy
 import os
 import hashlib
@@ -15,7 +17,7 @@ except Exception:
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.43-github-ready"
+VERSION = "v1.4.44-github-ready"
 rooms = {}
 
 
@@ -1150,11 +1152,6 @@ def admin_game_detail(game_id: str):
     if not g:
         return "Spil ikke fundet.", 404
     history = g.get("history") or []
-    # Simple HTML rendering
-    items = "".join(
-        f"<tr><td>{h.get('ts','')}</td><td>{h.get('event','')}</td><td>{json.dumps(h, ensure_ascii=False)}</td></tr>"
-        for h in history
-    )
     # Players can be stored as list[str] OR list[dict] (e.g. {name: ...}). Normalize for display.
     _raw_players = g.get("players") or []
     _player_names = []
@@ -1166,6 +1163,113 @@ def admin_game_detail(game_id: str):
         else:
             _player_names.append(str(p))
     players = ", ".join(_player_names)
+    # Detect round-based history (new) vs event-based history (old).
+    is_round_history = bool(history) and isinstance(history[0], dict) and ("round_number" in history[0] or "song" in history[0])
+
+    # Compute score totals from round history (if available)
+    totals: dict[str, int] = {}
+    if is_round_history:
+        for r in history:
+            for gg in (r.get("guesses") or []):
+                pn = str(gg.get("player_name") or "")
+                if not pn:
+                    continue
+                try:
+                    pts = int(gg.get("points") or 0)
+                except Exception:
+                    pts = 0
+                totals[pn] = totals.get(pn, 0) + pts
+
+    # Winner string
+    winner_html = ""
+    if totals:
+        max_pts = max(totals.values())
+        winners = sorted([n for n, p in totals.items() if p == max_pts])
+        if len(winners) == 1:
+            winner_html = f"<div class='resultLine'><b>Vinder:</b> {html.escape(winners[0])} ({max_pts} point)</div>"
+        else:
+            winner_html = f"<div class='resultLine'><b>Vindere:</b> {html.escape(', '.join(winners))} ({max_pts} point)</div>"
+
+    # Scoreboard
+    scoreboard_html = ""
+    if totals:
+        rows = "".join(
+            f"<tr><td>{html.escape(name)}</td><td style='text-align:right'>{pts}</td></tr>"
+            for name, pts in sorted(totals.items(), key=lambda x: (-x[1], x[0].lower()))
+        )
+        scoreboard_html = (
+            "<div class='scoreboard'>"
+            "<div class='scoreboardTitle'>Resultat</div>"
+            f"{winner_html}"
+            "<table class='scoreTable'><thead><tr><th>Spiller</th><th style='text-align:right'>Point</th></tr></thead>"
+            f"<tbody>{rows}</tbody></table>"
+            "</div>"
+        )
+
+    # History rendering
+    if is_round_history:
+        def _fmt_date(d: object) -> str:
+            try:
+                return str(d or "")
+            except Exception:
+                return ""
+
+        cards = []
+        for r in history:
+            rn = html.escape(str(r.get("round_number") or ""))
+            ended_at = html.escape(_fmt_date(r.get("ended_at")))
+            dj = html.escape(str(r.get("dj_name") or ""))
+            song = r.get("song") or {}
+            song_title = html.escape(str(song.get("title") or ""))
+            song_artist = html.escape(str(song.get("artist") or ""))
+            song_year = html.escape(str(song.get("year") or ""))
+
+            guess_rows = []
+            for gg in (r.get("guesses") or []):
+                pn = html.escape(str(gg.get("player_name") or ""))
+                guess = html.escape(str(gg.get("guess") or ""))
+                diff = gg.get("diff")
+                diff_txt = "" if diff is None else html.escape(str(diff))
+                pts = gg.get("points")
+                pts_txt = "0" if pts is None else html.escape(str(pts))
+                guess_rows.append(
+                    "<tr>"
+                    f"<td>{pn}</td>"
+                    f"<td>{guess}</td>"
+                    f"<td style='text-align:right'>{diff_txt}</td>"
+                    f"<td style='text-align:right'>{pts_txt}</td>"
+                    "</tr>"
+                )
+            guess_body = "".join(guess_rows) or "<tr><td colspan='4' class='muted'>Ingen gæt registreret.</td></tr>"
+
+            cards.append(
+                "<div class='historyCard'>"
+                f"<div class='historyTitle'>Runde {rn}</div>"
+                "<div class='historyMeta'>"
+                f"<div><b>DJ:</b> {dj}</div>"
+                f"<div><b>Sang:</b> {song_title} — {song_artist} ({song_year})</div>"
+                f"<div class='muted'>{ended_at}</div>"
+                "</div>"
+                "<table class='historyTable'>"
+                "<thead><tr><th>Spiller</th><th>Gæt</th><th style='text-align:right'>Diff</th><th style='text-align:right'>Point</th></tr></thead>"
+                f"<tbody>{guess_body}</tbody>"
+                "</table>"
+                "</div>"
+            )
+        history_html = "".join(cards) or "<div class='muted'>Ingen historik.</div>"
+    else:
+        # Fallback: old event-based history
+        items = "".join(
+            f"<tr><td>{html.escape(str(h.get('ts','')))}</td><td>{html.escape(str(h.get('event','')))}</td><td><code>{html.escape(json.dumps(h, ensure_ascii=False))}</code></td></tr>"
+            for h in history
+        )
+        history_html = (
+            "<table class='eventTable'>"
+            "<thead><tr><th>Tid</th><th>Event</th><th>Data</th></tr></thead>"
+            f"<tbody>{items}</tbody>"
+            "</table>"
+        )
+
     return f"""<!doctype html>
 <html lang='da'>
 <head>
@@ -1175,9 +1279,27 @@ def admin_game_detail(game_id: str):
   <style>
     body{{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:18px;}}
     .muted{{opacity:.7;font-size:12px;}}
-    table{{border-collapse:collapse;width:100%;margin-top:12px;}}
-    th,td{{border-bottom:1px solid #eee;padding:8px;text-align:left;vertical-align:top;}}
-    th{{font-size:12px;opacity:.8;}}
+
+    /* Result box */
+    .scoreboard{{margin-top:14px;padding:12px;border:1px solid #e5e7eb;border-radius:14px;background:#fafafa;}}
+    .scoreboardTitle{{font-weight:800;margin-bottom:6px;}}
+    .resultLine{{margin:6px 0 10px 0;}}
+    .scoreTable{{border-collapse:collapse;width:100%;}}
+    .scoreTable th,.scoreTable td{{border-bottom:1px solid #eee;padding:8px;text-align:left;vertical-align:top;}}
+    .scoreTable th{{font-size:12px;opacity:.8;}}
+
+    /* History (same layout as the game view) */
+    .historyCard{{border:1px solid #e5e7eb;border-radius:16px;padding:12px;margin:12px 0;background:white;}}
+    .historyTitle{{font-weight:900;margin-bottom:6px;}}
+    .historyMeta{{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}}
+    .historyTable{{border-collapse:collapse;width:100%;}}
+    .historyTable th,.historyTable td{{border-bottom:1px solid #eee;padding:8px;text-align:left;vertical-align:top;}}
+    .historyTable th{{font-size:12px;opacity:.8;}}
+
+    /* Fallback table */
+    .eventTable{{border-collapse:collapse;width:100%;margin-top:12px;}}
+    .eventTable th,.eventTable td{{border-bottom:1px solid #eee;padding:8px;text-align:left;vertical-align:top;}}
+    .eventTable th{{font-size:12px;opacity:.8;}}
     code{{background:#f3f4f6;padding:2px 6px;border-radius:6px;}}
   </style>
 </head>
@@ -1187,10 +1309,9 @@ def admin_game_detail(game_id: str):
   <div class='muted'>Room: {g.get('room_code','')} • Kategori: {g.get('category','')} • Runder: {g.get('rounds_total','')} • Spillere: {players}</div>
   <div class='muted'>Start: {g.get('started_at','')} • Slut: {g.get('ended_at','')}</div>
 
+  {scoreboard_html}
+
   <h2>Historik</h2>
-  <table>
-    <thead><tr><th>Tid</th><th>Event</th><th>Data</th></tr></thead>
-    <tbody>{items}</tbody>
-  </table>
+  {history_html}
 </body>
 </html>"""

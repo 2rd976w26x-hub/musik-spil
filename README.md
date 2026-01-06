@@ -1,8 +1,11 @@
-# Musik Spil (v1.4.43-github-ready)
+# Musik Spil (v1.4.44-github-ready)
 
 Denne ZIP er **baseret direkte på `musik-spil-v1.4.43-github-ready.zip`** (den stabile version).
 
-## Hvad er nyt i v1.4.43-github-ready
+## Hvad er nyt i v1.4.44-github-ready
+
+- Admin: Historikvisningen for et spil bruger nu samme layout som historikken i selve spillet.
+- Admin: Resultat/scoreboard vises (hvem der vandt, og point pr. spiller) baseret på runde-historik.
 
 - Hvis en spiller forlader et rum, kan spilleren logge ind igen med samme navn uden at blive oprettet som en ny spiller (samme id/score genbruges).
 

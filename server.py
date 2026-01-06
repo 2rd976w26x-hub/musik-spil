@@ -15,7 +15,7 @@ except Exception:
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.41-github-ready"
+VERSION = "v1.4.42-github-ready"
 rooms = {}
 
 
@@ -247,83 +247,84 @@ class Db:
     def register_device(self, device_id: str):
         """Compatibility alias used by older code."""
         return self.upsert_device(device_id)
-    def save_game(
-        self,
-        game_id: str,
-        *,
-        room_code: str,
-        category: str,
-        rounds_total: int,
-        guessed_seconds: int,
-        players: list,
-        history: list,
-        ended: bool = True,
-    ) -> None:
-        """Persist a finished game (admin history).
+    def save_game(self, game_id: str, *args, **kwargs) -> None:
+        """Compatibility save_game used by server code across versions.
 
-        The admin "Seneste spil" list only shows games where ended_at is set.
-        We therefore always write ended_at when this function is called.
+        Supports:
+        - legacy positional: save_game(game_id, room_code, started_at, ended_at, category, rounds_total, players, history)
+        - keyword style: save_game(game_id, room_code=..., started_at=..., ended_at=..., category=..., rounds_total=..., players=..., history=...)
+
+        Writes to the 'game_history' table created in init().
         """
-        if not self.enabled:
+        if not self.is_enabled():
             return
 
-        # For compatibility with earlier experiments we keep the "ended" kwarg,
-        # but the current server code calls save_game when the game is done.
-        self._upsert_game_row(
-            game_id,
-            room_code=room_code,
-            category=category,
-            rounds_total=rounds_total,
-            guessed_seconds=guessed_seconds,
-            players=players,
-            history=history,
-            ended=bool(ended),
-        )
+        room_code = None
+        started_at = None
+        ended_at = None
+        category = None
+        rounds_total = None
+        players = None
+        history = None
 
-    def _upsert_game_row(
-        self,
-        game_id: str,
-        *,
-        room_code: str,
-        category: str,
-        rounds_total: int,
-        guessed_seconds: int,
-        players: list,
-        history: list,
-        ended: bool,
-    ) -> None:
-        """Internal helper to insert/update the main game row.
+        if args and len(args) >= 7:
+            room_code = args[0]
+            started_at = args[1]
+            ended_at = args[2]
+            category = args[3]
+            rounds_total = args[4]
+            players = args[5]
+            history = args[6]
+        else:
+            room_code = kwargs.get("room_code")
+            started_at = kwargs.get("started_at")
+            ended_at = kwargs.get("ended_at")
+            category = kwargs.get("category")
+            rounds_total = kwargs.get("rounds_total")
+            players = kwargs.get("players")
+            history = kwargs.get("history")
 
-        IMPORTANT: must match the schema created in _ensure_schema().
-        """
-        from psycopg2.extras import Json
+        if started_at is None:
+            started_at = now()
+        if ended_at is None:
+            ended_at = now()
 
-        ended_at_sql = "NOW()" if ended else "NULL"
+        try:
+            started_at_f = float(started_at)
+        except Exception:
+            started_at_f = float(now())
+        try:
+            ended_at_f = float(ended_at)
+        except Exception:
+            ended_at_f = float(now())
+
         with self.conn() as c:
-            c.execute(
-                f"""
-                INSERT INTO game_history (
-                    id, room_code, category, rounds_total, guessed_seconds, players, history, started_at, ended_at
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, NOW(), {ended_at_sql})
-                ON CONFLICT (id) DO UPDATE SET
-                    room_code = EXCLUDED.room_code,
-                    category = EXCLUDED.category,
-                    rounds_total = EXCLUDED.rounds_total,
-                    guessed_seconds = EXCLUDED.guessed_seconds,
-                    players = EXCLUDED.players,
-                    history = EXCLUDED.history,
-                    ended_at = COALESCE(game_history.ended_at, EXCLUDED.ended_at)
-                """,
-                (
-                    game_id,
-                    room_code,
-                    category,
-                    int(rounds_total),
-                    int(guessed_seconds),
-                    Json(players or []),
-                    Json(history or []),
-                ),
-            )
+            with c.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO game_history (id, room_code, started_at, ended_at, category, rounds_total, players, history)
+                    VALUES (%s, %s, to_timestamp(%s), to_timestamp(%s), %s, %s, %s::jsonb, %s::jsonb)
+                    ON CONFLICT (id) DO UPDATE
+                    SET room_code = EXCLUDED.room_code,
+                        started_at = EXCLUDED.started_at,
+                        ended_at = EXCLUDED.ended_at,
+                        category = EXCLUDED.category,
+                        rounds_total = EXCLUDED.rounds_total,
+                        players = EXCLUDED.players,
+                        history = EXCLUDED.history;
+                    """,
+                    (
+                        str(game_id),
+                        str(room_code or ""),
+                        started_at_f,
+                        ended_at_f,
+                        category,
+                        int(rounds_total or 0),
+                        json.dumps(players or []),
+                        json.dumps(history or []),
+                    ),
+                )
+            c.commit()
 
     def game_by_id(self, game_id: str):
         """Backward-compatible alias used by some admin routes."""

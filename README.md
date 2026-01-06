@@ -1,8 +1,8 @@
-# Musik Spil (v1.4.41-github-ready)
+# Musik Spil (v1.4.42-github-ready)
 
-Denne ZIP er **baseret direkte på `musik-spil-v1.4.7-github-ready.zip`** (den stabile version).
+Denne ZIP er **baseret direkte på `musik-spil-v1.4.42-github-ready.zip`** (den stabile version).
 
-## Hvad er nyt i v1.4.41-github-ready
+## Hvad er nyt i v1.4.42-github-ready
 
 - Hvis en spiller forlader et rum, kan spilleren logge ind igen med samme navn uden at blive oprettet som en ny spiller (samme id/score genbruges).
 

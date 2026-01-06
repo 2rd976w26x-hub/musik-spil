@@ -1,12 +1,12 @@
-# Musik Spil (v1.4.38)
+# Musik Spil (v1.4.39-github-ready)
 
 Denne ZIP er **baseret direkte på `musik-spil-v1.4.7-github-ready.zip`** (den stabile version).
 
-## Hvad er nyt i v1.4.38
+## Hvad er nyt i v1.4.39-github-ready
 
 - Hvis en spiller forlader et rum, kan spilleren logge ind igen med samme navn uden at blive oprettet som en ny spiller (samme id/score genbruges).
 
-- Fix: Seneste spil i admin bliver nu gemt og vist korrekt i Postgres (game_history ended_at + korrekt schema).
+- Fix: Admin “Seneste spil” opdaterer nu korrekt igen (JS-fejl i admin-viewet rettet).
 
 - Fairness: Når spillet startes, rundes antal runder op så det går op i antal spillere (så alle får lige mange gæt).
 - UI: Viser hvor mange runder der er tilbage.

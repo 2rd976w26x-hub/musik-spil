@@ -113,12 +113,12 @@ function populateCategorySelect(selected){
 async function loadVersion(){
   try{
     const r = await api({action:'version'});
-    const v = (r && r.version) ? r.version : 'v?';
+    const v = (r && r.version) ? r.version : 'v1.4.39-github-ready';
     const vt = document.getElementById('versionText');
     if(vt) vt.innerText = v;
   }catch(e){
     const vt = document.getElementById('versionText');
-    if(vt) vt.innerText = 'v?';
+    if(vt) vt.innerText = 'v1.4.39-github-ready';
   }
 }
 

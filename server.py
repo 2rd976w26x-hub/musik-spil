@@ -15,7 +15,7 @@ except Exception:
 
 app = Flask(__name__, static_folder="web", static_url_path="")
 PORT = 8787
-VERSION = "v1.4.38-github-ready"
+VERSION = "v1.4.39-github-ready"
 rooms = {}
 
 
@@ -1082,7 +1082,7 @@ async function tick(){
   svgBarChart(document.getElementById('chart'), series);
 }
 
-async function loadGames(){
+async async function loadGames(){
   const r = await fetch('/admin/api/games?limit=30',{cache:'no-store'});
   const s = await r.json();
   const tbody = document.getElementById('games');
